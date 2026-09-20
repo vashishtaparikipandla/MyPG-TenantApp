@@ -9,6 +9,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
 import { Icon } from '@astryxdesign/core/Icon';
+import { Card } from '@astryxdesign/core/Card';
 
 export default function Login() {
   const router = useRouter();
@@ -33,7 +34,9 @@ export default function Login() {
   };
 
   const handleVerify = () => {
-    if (otp.length === 6) {
+    if (otp === '999999') {
+      router.push('/dashboard');
+    } else if (otp.length === 6) {
       router.push('/home');
     }
   };
@@ -93,6 +96,12 @@ export default function Login() {
             onClick={handleVerify} 
             disabled={otp.length < 6} 
           />
+
+          <Card xstyle={{ padding: 12, backgroundColor: '#eff6ff', marginTop: 12 }}>
+            <Text type="supporting" color="secondary">
+              Testing tips: Enter OTP <b>999999</b> to log in as an Active Tenant (Dashboard). Enter any other 6 digits to log in as a Prospect (Home).
+            </Text>
+          </Card>
 
           <HStack xstyle={{ justifyContent: 'center', marginTop: 16 }}>
             {timer > 0 ? (

@@ -24,7 +24,7 @@ export default function ProspectHome() {
               <Text type="supporting" color="secondary">Have a code from your owner?</Text>
             </VStack>
           </HStack>
-          <Button label="Enter PG Code" variant="primary" />
+          <Button label="Enter PG Code" variant="primary" onClick={() => window.location.href = '/join'} />
           <Button label="Scan QR" variant="secondary" />
         </VStack>
       </Card>

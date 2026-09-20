@@ -1,252 +1,415 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    :root {
+      --primary: #4F46E5; /* Indigo 600 */
+      --primary-dark: #4338CA;
+      --bg: #F3F4F6; /* Gray 100 */
+      --surface: #FFFFFF;
+      --text-main: #111827;
+      --text-muted: #6B7280;
+    }
+
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     ::-webkit-scrollbar { display: none; }
-    @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
-    .sos-pulse::before { content: ''; position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 50%; background-color: #ef4444; animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; z-index: -1; }
+    
+    /* Device Frame */
+    .device-frame {
+      width: 390px;
+      height: 844px; /* iPhone 13/14 Pro dimensions */
+      background: var(--bg);
+      border-radius: 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 12px #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 30px;
+      background: #0f172a;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* Screen Transitions */
+    .screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+    }
+    .screen.active { transform: translateX(0); z-index: 20; }
+    .screen.exit-left { transform: translateX(-30%); z-index: 10; opacity: 0.8; }
+    
+    /* Glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,0.4);
+    }
+    
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 100%);
+      box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    /* Gradient Cards */
+    .gradient-rent {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .gradient-rent::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+      transform: rotate(30deg);
+      pointer-events: none;
+    }
+
+    /* iOS Modal Sheet */
+    .sheet-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 50;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .sheet-overlay.active { opacity: 1; pointer-events: auto; }
+    
+    .sheet {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 85%;
+      background: var(--bg);
+      border-radius: 32px 32px 0 0;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 51;
+      display: flex; flex-direction: column;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+    }
+    .sheet.active { transform: translateY(0); }
+    
+    .sheet-handle {
+      width: 40px; height: 5px;
+      background: #D1D5DB;
+      border-radius: 3px;
+      margin: 12px auto;
+    }
+
+    /* Animations */
+    .pressable:active { transform: scale(0.96); transition: transform 0.1s; }
+    
+    .sos-ring { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    @keyframes ping {
+      75%, 100% { transform: scale(1.8); opacity: 0; }
+    }
+    
+    /* Hide native scrollbar for smooth inner scroll */
+    .scroll-area { overflow-y: auto; flex: 1; padding-bottom: 100px; }
   </style>
 </head>
-<body class="bg-[var(--background)] antialiased p-5 flex justify-center items-center min-h-screen">
+<body class="bg-gray-200 p-8 flex justify-center items-center min-h-screen">
 
-  <div class="relative w-[400px] h-[800px] bg-gray-50 rounded-[3rem] shadow-2xl border-[8px] border-gray-900 overflow-hidden flex flex-col">
-    <div class="absolute top-0 inset-x-0 h-7 bg-gray-900 w-40 mx-auto rounded-b-3xl z-50"></div>
-    <div id="app-root" class="flex-1 overflow-y-auto relative pt-10"></div>
+  <div class="device-frame">
+    <div class="notch"></div>
+
+    <!-- SCREENS -->
+    <div id="screen-login" class="screen active">
+      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
+        <div>
+          <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          </div>
+          <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Welcome to MyPG</h1>
+          <p class="text-lg text-gray-500 font-medium">Your modern living experience starts here.</p>
+          
+          <div class="mt-12 space-y-3">
+            <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Mobile Number</label>
+            <div class="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100 transition-all">
+              <span class="text-gray-400 font-semibold text-lg mr-3">+91</span>
+              <input id="login-phone" type="tel" class="bg-transparent w-full outline-none text-xl font-semibold text-gray-900" placeholder="9999999999" maxlength="10" value="9999999999">
+            </div>
+          </div>
+        </div>
+        
+        <button onclick="navTo('screen-otp')" class="pressable w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl shadow-gray-900/20">Continue</button>
+      </div>
+    </div>
+
+    <div id="screen-otp" class="screen">
+      <div class="flex flex-col h-full p-8 pt-20 bg-white justify-between">
+        <div>
+          <button onclick="navBack()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-6 pressable">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Verify it's you</h2>
+          <p class="text-gray-500 font-medium mb-10">We've sent a 6-digit code to <b class="text-gray-900" id="otp-phone-display">+91 9999999999</b></p>
+          
+          <input id="login-otp" type="tel" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-3xl font-bold text-center tracking-[0.4em] text-gray-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all" placeholder="••••••" maxlength="6" value="999999">
+        </div>
+        
+        <button onclick="login()" class="pressable w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl shadow-indigo-600/30">Verify & Login</button>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="screen-main" class="screen bg-[#F8FAFC]">
+      
+      <!-- Top Header -->
+      <div class="glass fixed top-0 w-full pt-14 pb-4 px-6 z-30 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img src="https://i.pravatar.cc/150?img=11" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover" />
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Good Morning,</p>
+            <h2 class="text-lg font-extrabold text-gray-900 leading-tight">Rohit Verma</h2>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="openSheet('sheet-inbox')" class="pressable w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm relative">
+            <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+          </button>
+          <button onclick="openSheet('sheet-sos')" class="pressable w-10 h-10 bg-red-50 border border-red-100 rounded-full flex items-center justify-center text-red-600">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div id="tab-home" class="scroll-area pt-32 px-6">
+        
+        <!-- Rent Card -->
+        <div class="gradient-rent rounded-3xl p-6 mb-8">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <p class="text-indigo-200 text-sm font-semibold mb-1">Upcoming Rent</p>
+              <h3 class="text-4xl font-extrabold">₹8,500</h3>
+            </div>
+            <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/30">Oct 5th</span>
+          </div>
+          <div class="flex gap-3 mt-6">
+            <button class="pressable flex-1 py-3.5 bg-white text-gray-900 rounded-xl font-bold shadow-lg text-sm">Pay via UPI</button>
+            <button class="pressable flex-1 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm">Mark as Cash</button>
+          </div>
+        </div>
+
+        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">Quick Actions</h4>
+        <div class="grid grid-cols-4 gap-4 mb-8">
+          
+          <button onclick="openSheet('sheet-food')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">🍲</div>
+            <span class="text-[11px] font-bold text-gray-600">Menu</span>
+          </button>
+          
+          <button onclick="openSheet('sheet-issues')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">🎫</div>
+            <span class="text-[11px] font-bold text-gray-600">Issues</span>
+          </button>
+
+          <button onclick="openSheet('sheet-clean')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">✨</div>
+            <span class="text-[11px] font-bold text-gray-600">Clean</span>
+          </button>
+
+          <button onclick="openSheet('sheet-laundry')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">👕</div>
+            <span class="text-[11px] font-bold text-gray-600">Laundry</span>
+          </button>
+
+          <button onclick="openSheet('sheet-leave')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">✈️</div>
+            <span class="text-[11px] font-bold text-gray-600">Leave</span>
+          </button>
+          
+          <button onclick="openSheet('sheet-room')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">🛏️</div>
+            <span class="text-[11px] font-bold text-gray-600">Room</span>
+          </button>
+
+          <button class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl">📶</div>
+            <span class="text-[11px] font-bold text-gray-600">WiFi</span>
+          </button>
+
+          <button onclick="openSheet('sheet-moveout')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-red-50 rounded-2xl shadow-sm border border-red-100 flex items-center justify-center text-2xl">👋</div>
+            <span class="text-[11px] font-bold text-red-600">Exit PG</span>
+          </button>
+        </div>
+
+        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">Ongoing</h4>
+        <div class="flex flex-col gap-3">
+          <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl">👕</div>
+              <div>
+                <p class="font-bold text-gray-900">Laundry Order #992</p>
+                <p class="text-xs font-semibold text-gray-500 mt-0.5">Ready tomorrow</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-lg text-[10px] font-bold uppercase">Processing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="glass fixed bottom-0 w-full h-24 pb-6 flex justify-around items-center z-40 rounded-b-[40px]">
+        <button class="flex flex-col items-center gap-1.5 text-indigo-600 w-16">
+          <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+          <span class="text-[10px] font-bold">Home</span>
+        </button>
+        <button class="flex flex-col items-center gap-1.5 text-gray-400 hover:text-gray-900 transition w-16">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+          <span class="text-[10px] font-bold">Payments</span>
+        </button>
+        <button class="flex flex-col items-center gap-1.5 text-gray-400 hover:text-gray-900 transition w-16">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+          <span class="text-[10px] font-bold">Profile</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- BOTTOM SHEETS (Overlays) -->
+    <div id="sheet-overlay" class="sheet-overlay" onclick="closeSheet()"></div>
+
+    <!-- Food Sheet -->
+    <div id="sheet-food" class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
+        <h2 class="text-2xl font-extrabold text-gray-900">Today's Menu</h2>
+        <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500">✕</button>
+      </div>
+      <div class="scroll-area p-6 space-y-4">
+        <!-- Lunch Locked -->
+        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-3"><span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest flex items-center gap-1">🔒 Locked</span></div>
+          <h3 class="text-xl font-extrabold mb-1">Lunch</h3>
+          <p class="text-gray-500 text-sm font-medium mb-4 pr-16">Paneer Butter Masala, Dal, Roti, Rice</p>
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
+            <span class="font-bold text-green-700 text-sm">Available for you</span>
+            <div class="w-12 h-6 bg-green-500 rounded-full opacity-50"><div class="w-5 h-5 bg-white rounded-full ml-6 mt-0.5"></div></div>
+          </div>
+        </div>
+        <!-- Dinner Open -->
+        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm relative">
+          <div class="absolute top-0 right-0 p-3"><span class="text-indigo-600 text-xs font-bold flex items-center gap-1">⏱ Locks in 4h</span></div>
+          <h3 class="text-xl font-extrabold mb-1">Dinner</h3>
+          <p class="text-gray-500 text-sm font-medium mb-4 pr-16">Aloo Gobi, Dal Tadka, Rice, Gulab Jamun</p>
+          <div class="flex items-center justify-between p-3 bg-green-50 rounded-2xl border border-green-100">
+            <span class="font-bold text-green-700 text-sm">Available for you</span>
+            <div class="pressable w-12 h-6 bg-green-500 rounded-full shadow-inner"><div class="w-5 h-5 bg-white rounded-full ml-6 mt-0.5 shadow-sm"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOS Sheet -->
+    <div id="sheet-sos" class="sheet !bg-red-600 !h-[90%]">
+      <div class="sheet-handle !bg-red-400"></div>
+      <div class="px-6 mt-4 flex justify-between items-center">
+        <h2 class="text-2xl font-extrabold text-white">Emergency SOS</h2>
+        <button onclick="closeSheet()" class="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center font-bold text-white">✕</button>
+      </div>
+      <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <div class="relative w-56 h-56 flex items-center justify-center mb-12">
+          <div class="absolute inset-0 bg-red-500 rounded-full sos-ring"></div>
+          <button class="pressable w-48 h-48 bg-white text-red-600 rounded-full flex items-center justify-center shadow-2xl relative z-10 border-8 border-red-500">
+            <span class="font-extrabold text-5xl">SOS</span>
+          </button>
+        </div>
+        <p class="text-red-100 font-medium text-lg px-4 mb-10">Press and hold to instantly alert the Manager, Security, and your Guardian.</p>
+        <button class="pressable w-full py-4 bg-red-800 text-white rounded-2xl font-bold text-lg border border-red-500">Call 112 (Police)</button>
+      </div>
+    </div>
+    
+    <!-- Other placeholder sheets for the mockup -->
+    <div id="sheet-issues" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Issues</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">AC not cooling</h4><p class="text-gray-500 text-sm">In Progress</p></div></div></div>
+    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold">Skip</button></div></div></div>
+    <div id="sheet-laundry" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Laundry</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Order #992</h4><p class="text-gray-500 text-sm">Processing</p></div></div></div>
+    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Leave</h2><p class="text-gray-500 mb-4">Pause meals and cleaning while away.</p><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit</button></div></div>
+    <div id="sheet-room" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Room Change</h2><p class="text-gray-500 mb-4">Request a different bed or room type.</p><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Request Change</button></div></div>
+    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4">Requires 30 days notice.</p><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold">Initiate Exit</button></div></div>
+    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1">Power Outage Tomorrow</h4></div></div></div>
+
   </div>
 
   <script>
-    let state = {
-      screen: 'persona', phone: '', otp: '', activeTab: 'home', overlay: null, sosState: 'idle', roomStep: 1, moveStep: 1, leaveStep: 1
-    };
+    let activeSheet = null;
+    let navStack = ['screen-login'];
 
-    function render() {
-      const root = document.getElementById('app-root');
-      if (state.overlay) { root.innerHTML = renderOverlay(); } 
-      else {
-        if (state.screen === 'persona') root.innerHTML = renderPersonaPicker();
-        else if (state.screen === 'login') root.innerHTML = renderLogin();
-        else if (state.screen === 'home') root.innerHTML = renderHome();
-        else if (state.screen === 'join') root.innerHTML = renderJoin();
-        else if (state.screen === 'activation') root.innerHTML = renderActivation();
-        else if (state.screen === 'dashboard') root.innerHTML = renderDashboard();
-      }
-      attachEvents();
+    function navTo(screenId) {
+      const current = document.getElementById(navStack[navStack.length - 1]);
+      const next = document.getElementById(screenId);
+      
+      current.classList.remove('active');
+      current.classList.add('exit-left');
+      
+      next.classList.remove('exit-left');
+      next.classList.add('active');
+      
+      navStack.push(screenId);
     }
 
-    function renderOverlay() {
-      if (state.overlay === 'issues') return renderIssues();
-      if (state.overlay === 'food') return renderFood();
-      if (state.overlay === 'sos') return renderSOS();
-      if (state.overlay === 'clean') return renderClean();
-      if (state.overlay === 'laundry') return renderLaundry();
-      if (state.overlay === 'roomchange') return renderRoomChange();
-      if (state.overlay === 'moveout') return renderMoveOut();
-      if (state.overlay === 'leave') return renderLeave();
-      if (state.overlay === 'inbox') return renderInbox();
-      return '';
+    function navBack() {
+      if (navStack.length <= 1) return;
+      const current = document.getElementById(navStack.pop());
+      const prev = document.getElementById(navStack[navStack.length - 1]);
+      
+      current.classList.remove('active');
+      
+      prev.classList.remove('exit-left');
+      prev.classList.add('active');
     }
 
-    // -- New Minor Overlays --
-    function renderLeave() {
-      if (state.leaveStep === 1) {
-        return `
-          <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
-            <div class="flex items-center gap-3">
-              <button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button>
-              <h2 class="text-2xl font-bold">Declare Leave</h2>
-            </div>
-            <p class="text-gray-500 font-medium text-sm">Tell your PG you'll be away. This automatically pauses your meals and cleaning.</p>
-            <div class="flex flex-col gap-4 mt-2">
-              <label class="font-bold text-gray-700 text-sm">Start Date</label>
-              <input type="date" class="w-full p-4 border border-gray-300 rounded-2xl font-medium" />
-              <label class="font-bold text-gray-700 text-sm mt-2">Return Date</label>
-              <input type="date" class="w-full p-4 border border-gray-300 rounded-2xl font-medium" />
-            </div>
-            <div class="p-4 bg-yellow-50 rounded-2xl border border-yellow-200 mt-4">
-              <p class="text-sm text-yellow-800 font-bold mb-1">Effects Preview:</p>
-              <ul class="text-sm text-yellow-700 list-disc pl-4 space-y-1 font-medium">
-                <li>Meals will be cancelled for these dates</li>
-                <li>Cleaning slots will be skipped</li>
-                <li>Manager will be notified</li>
-              </ul>
-            </div>
-            <button data-action="submit-leave" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg mt-auto shadow-sm">Confirm Leave</button>
-          </div>
-        `;
-      }
-      return `
-        <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
-          <button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button>
-          <h2 class="text-2xl font-bold">Leave Status</h2>
-          <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col gap-2">
-            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold uppercase w-fit">Approved</span>
-            <h3 class="text-xl font-bold text-gray-900 mt-2">12 Oct - 18 Oct</h3>
-            <p class="text-gray-500 font-medium text-sm">You are marked as on leave. Enjoy your trip!</p>
-            <button class="w-full py-3 mt-3 bg-gray-100 text-gray-700 rounded-xl font-bold text-sm">I'm back early</button>
-          </div>
-        </div>
-      `;
+    function login() {
+      // Simulate login delay
+      const btn = document.querySelector('#screen-otp button');
+      btn.innerHTML = 'Verifying...';
+      setTimeout(() => {
+        navTo('screen-main');
+        btn.innerHTML = 'Verify & Login';
+      }, 600);
     }
 
-    function renderInbox() {
-      return `
-        <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
-          <div class="flex justify-between items-center">
-            <button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button>
-            <h2 class="text-2xl font-bold">Inbox</h2>
-            <div class="w-10"></div>
-          </div>
-          
-          <div class="flex flex-col gap-3">
-            <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-sm border-l-4 border-l-red-500">
-              <div class="flex justify-between mb-1"><span class="font-bold text-red-600 text-xs uppercase tracking-wider">Urgent Notice</span><span class="text-xs text-gray-400">10:00 AM</span></div>
-              <h4 class="font-bold text-gray-900">Power Outage Tomorrow</h4>
-              <p class="text-sm text-gray-600 mt-1">Power will be cut from 2 PM to 5 PM for grid maintenance.</p>
-              <button class="w-full py-2 bg-gray-100 text-gray-900 rounded-lg mt-3 font-bold text-sm">Acknowledge</button>
-            </div>
-
-            <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-sm opacity-70">
-              <div class="flex justify-between mb-1"><span class="font-bold text-gray-500 text-xs uppercase tracking-wider">Rent</span><span class="text-xs text-gray-400">Yesterday</span></div>
-              <h4 class="font-bold text-gray-900">Receipt Generated</h4>
-              <p class="text-sm text-gray-600 mt-1">Your payment of ₹8,500 has been confirmed.</p>
-            </div>
-          </div>
-        </div>
-      `;
+    function openSheet(sheetId) {
+      closeSheet();
+      activeSheet = document.getElementById(sheetId);
+      const overlay = document.getElementById('sheet-overlay');
+      
+      overlay.classList.add('active');
+      activeSheet.classList.add('active');
     }
 
-    // -- Screens --
-    function renderDashboard() {
-      const isHome = state.activeTab === 'home';
-      const isRent = state.activeTab === 'rent';
-      const isProfile = state.activeTab === 'profile';
-
-      let content = '';
-
-      if (isHome) {
-        content = `
-          <div class="flex justify-between items-center mb-2">
-            <div><h2 class="text-2xl font-bold">Sunrise PG</h2><p class="text-gray-500 font-medium">Room 204B, Tower A</p></div>
-            <div class="flex gap-2">
-              <button data-action="open-inbox" class="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center text-xl shadow-sm relative"><span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span>🔔</button>
-              <button data-action="open-sos" class="w-12 h-12 bg-red-100 text-red-600 border border-red-200 rounded-full flex items-center justify-center text-xs font-bold">SOS</button>
-            </div>
-          </div>
-          <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm mt-4">
-            <p class="text-gray-500 font-semibold uppercase text-xs mb-1">Rent Due</p><h3 class="text-3xl font-bold text-red-600">₹8,500</h3>
-          </div>
-          <div class="mt-6">
-            <h4 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h4>
-            <div class="grid grid-cols-3 gap-3">
-              <button data-action="open-issues" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🎫</span><span class="text-xs font-bold">Issue</span></button>
-              <button data-action="open-food" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🍲</span><span class="text-xs font-bold">Menu</span></button>
-              <button data-action="open-clean" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">✨</span><span class="text-xs font-bold">Clean</span></button>
-              <button data-action="open-leave" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">✈️</span><span class="text-xs font-bold">Leave</span></button>
-              <button data-action="open-laundry" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">👕</span><span class="text-xs font-bold">Laundry</span></button>
-              <button data-action="open-roomchange" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🛏️</span><span class="text-xs font-bold">Room</span></button>
-              <button class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">📶</span><span class="text-xs font-bold">WiFi</span></button>
-              <button data-action="open-moveout" class="bg-red-50 p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center gap-2 active:scale-95 col-span-2"><span class="text-xl">👋</span><span class="text-xs font-bold text-red-700">Exit PG</span></button>
-            </div>
-          </div>
-        `;
-      } else if (isRent) {
-        content = `<h2 class="text-2xl font-bold mb-4">Rent & Payments</h2><div class="bg-red-50 p-6 rounded-3xl border border-red-100 flex flex-col gap-4 mb-6"><div><h3 class="text-3xl font-bold text-red-600">₹8,500</h3><p class="text-red-700 font-medium text-sm mt-1">Overdue (Oct 5th)</p></div><button class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Pay Now</button></div>`;
-      } else if (isProfile) {
-        content = `
-          <h2 class="text-2xl font-bold mb-4">Profile</h2>
-          <div class="bg-white p-5 border border-gray-200 rounded-2xl shadow-sm flex items-center gap-4 mb-6">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-2xl">R</div>
-            <div><h3 class="font-bold text-gray-900 text-lg">Rohit Verma</h3><p class="text-gray-500 font-medium">+91 9999999999</p></div>
-          </div>
-          <div class="flex flex-col gap-3">
-            <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-sm flex justify-between items-center font-bold text-gray-700"><span>📄 My Documents</span><span class="text-gray-400">→</span></div>
-            <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-sm flex justify-between items-center font-bold text-gray-700"><span>🛡️ Privacy & Settings</span><span class="text-gray-400">→</span></div>
-            <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-sm flex justify-between items-center font-bold text-gray-700"><span>🎁 Refer & Earn</span><span class="text-gray-400">→</span></div>
-            <button data-action="nav-persona" class="bg-gray-100 p-4 border border-gray-200 rounded-2xl shadow-sm flex justify-center items-center font-bold text-gray-900 mt-4">Log Out</button>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="p-6 flex flex-col h-full overflow-y-auto pb-24">${content}</div>
-        <div class="absolute bottom-0 inset-x-0 h-20 bg-white border-t border-gray-200 flex justify-around items-center px-6 pb-2 rounded-b-[3rem] z-20">
-          <button data-action="tab-home" class="flex flex-col items-center gap-1 ${isHome ? 'text-blue-600' : 'text-gray-400'}"><span class="text-2xl">🏠</span><span class="text-[10px] font-bold">Home</span></button>
-          <button data-action="tab-rent" class="flex flex-col items-center gap-1 ${isRent ? 'text-blue-600' : 'text-gray-400'}"><span class="text-2xl">💳</span><span class="text-[10px] font-bold">Payments</span></button>
-          <button data-action="tab-profile" class="flex flex-col items-center gap-1 ${isProfile ? 'text-blue-600' : 'text-gray-400'}"><span class="text-2xl">👤</span><span class="text-[10px] font-bold">Profile</span></button>
-        </div>
-      `;
+    function closeSheet() {
+      if (!activeSheet) return;
+      const overlay = document.getElementById('sheet-overlay');
+      
+      overlay.classList.remove('active');
+      activeSheet.classList.remove('active');
+      activeSheet = null;
     }
-
-    // Minified unchanged screens
-    function renderRoomChange() { if (state.roomStep === 1) return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><div class="flex items-center gap-3"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button><h2 class="text-2xl font-bold">Change Room</h2></div><button data-action="submit-room" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg mt-auto mb-6 shadow-sm">Submit Request</button></div>`; return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button><h2 class="text-2xl font-bold">Room Change Status</h2><div class="bg-white p-6 rounded-3xl border shadow-sm"><span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold mb-2">Under Review</span></div></div>`; }
-    function renderMoveOut() { if (state.moveStep === 1) return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><div class="flex items-center gap-3"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button><h2 class="text-2xl font-bold">Move Out</h2></div><button data-action="submit-move" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold text-lg mt-auto shadow-sm">Submit Request</button></div>`; return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button><h2 class="text-2xl font-bold">Move Out Status</h2><div class="bg-red-50 p-6 rounded-3xl border shadow-sm"><h3 class="text-2xl font-bold text-red-700">14 Nov 2026</h3></div></div>`; }
-    function renderSOS() { if (state.sosState === 'idle') return `<div class="p-6 flex flex-col h-full bg-red-50 gap-6 justify-center items-center text-center"><button data-action="close-overlay" class="absolute top-12 left-6 text-red-600 font-bold text-lg">← Back</button><div class="relative mb-12"><button data-action="trigger-sos" class="sos-pulse relative w-48 h-48 bg-red-600 rounded-full flex items-center justify-center active:scale-95"><span class="text-white font-bold text-4xl">SOS</span></button></div></div>`; return `<div class="p-6 flex flex-col h-full bg-red-600 gap-6 justify-center items-center text-center text-white"><h2 class="text-4xl font-bold mb-4">SOS Sent</h2><button data-action="cancel-sos" class="w-full py-4 bg-white text-red-600 rounded-2xl font-bold text-lg mt-auto mb-8">I'm safe (Close)</button></div>`; }
-    function renderClean() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold">Cleaning</h2><div class="bg-white p-6 rounded-3xl border shadow-sm"><h3 class="font-bold text-lg">Next Clean: 10AM</h3></div></div>`; }
-    function renderLaundry() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold">Laundry</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><h4>12 Items (Bag)</h4></div></div>`; }
-    function renderIssues() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold">Issues</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><h4>AC not cooling</h4></div></div>`; }
-    function renderFood() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold">Menu</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><b>Lunch (🔒 Locked)</b></div></div>`; }
-    function renderPersonaPicker() { return `<div class="p-6 flex flex-col justify-center h-full gap-8"><div><h1 class="text-3xl font-bold mb-2">Who is using this app?</h1><p class="text-gray-500 font-medium">Select your role</p></div><button data-action="nav-tenant" class="p-5 bg-white border border-gray-200 rounded-2xl flex items-center justify-between shadow-sm"><span class="font-semibold text-lg text-gray-800">Tenant</span><span class="text-xl text-gray-400">→</span></button></div>`; }
-    function renderLogin() { 
-      if (!state.phoneStep || state.phoneStep === 1) return `<div class="p-6 flex flex-col h-full mt-8 gap-8"><button data-action="nav-persona" class="text-blue-600 font-semibold w-fit">← Back</button><div><h2 class="text-3xl font-bold mb-2">Welcome</h2></div><input id="phone-input" type="tel" class="w-full p-4 border border-gray-300 rounded-2xl text-xl" placeholder="10-digit mobile number" value="${state.phone}" maxlength="10" /><button data-action="send-otp" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Get OTP</button></div>`;
-      return `<div class="p-6 flex flex-col h-full mt-8 gap-8"><button data-action="back-phone" class="text-blue-600 font-semibold w-fit">← Back</button><div><h2 class="text-3xl font-bold mb-2">Enter OTP</h2></div><input id="otp-input" type="number" class="w-full p-4 border border-gray-300 rounded-2xl text-2xl tracking-[0.5em] text-center" value="${state.otp}" maxlength="6" /><button data-action="verify-otp" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Verify</button></div>`;
-    }
-    function renderHome() { return `<div class="p-6 flex flex-col gap-6 h-full pb-20"><h2 class="text-3xl font-bold">Hi there,</h2><button data-action="nav-join" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Enter PG Code</button></div>`; }
-    function renderJoin() { return `<div class="p-6"><button data-action="nav-home" class="text-blue-600 font-bold">← Back</button></div>`; }
-    function renderActivation() { return `<div class="p-6"><h2 class="text-2xl font-bold">Onboarding</h2><button data-action="sign-agreement" class="w-full py-4 bg-gray-900 text-white mt-8 rounded-2xl">Skip & Activate</button></div>`; }
-
-    function attachEvents() {
-      const phoneInput = document.getElementById('phone-input');
-      if (phoneInput) phoneInput.addEventListener('input', e => { state.phone = e.target.value.replace(/\D/g, '').slice(0, 10); render(); document.getElementById('phone-input').focus(); });
-      const otpInput = document.getElementById('otp-input');
-      if (otpInput) otpInput.addEventListener('input', e => { state.otp = e.target.value.replace(/\D/g, '').slice(0, 6); render(); document.getElementById('otp-input').focus(); });
-
-      document.querySelectorAll('button[data-action]').forEach(btn => {
-        btn.addEventListener('click', e => {
-          const action = e.currentTarget.dataset.action;
-          
-          if (action === 'nav-tenant') state.screen = 'login';
-          if (action === 'nav-persona') { state.screen = 'persona'; state.phoneStep = 1; state.phone = ''; state.otp = ''; state.overlay = null; state.activeTab = 'home'; }
-          if (action === 'send-otp') state.phoneStep = 2;
-          if (action === 'back-phone') state.phoneStep = 1;
-          
-          if (action === 'verify-otp') {
-            if (state.otp === '999999') { state.screen = 'dashboard'; state.activeTab = 'home'; }
-            else if (state.otp === '123456') { state.screen = 'activation'; state.actStep = 1; }
-            else state.screen = 'home';
-          }
-          if (action === 'sign-agreement') { state.screen = 'dashboard'; state.activeTab = 'home'; }
-          
-          if (action === 'tab-home') state.activeTab = 'home';
-          if (action === 'tab-rent') state.activeTab = 'rent';
-          if (action === 'tab-profile') state.activeTab = 'profile';
-          
-          if (action === 'open-issues') state.overlay = 'issues';
-          if (action === 'open-food') state.overlay = 'food';
-          if (action === 'open-clean') state.overlay = 'clean';
-          if (action === 'open-laundry') state.overlay = 'laundry';
-          if (action === 'open-roomchange') { state.overlay = 'roomchange'; state.roomStep = 1; }
-          if (action === 'open-moveout') { state.overlay = 'moveout'; state.moveStep = 1; }
-          if (action === 'open-sos') { state.overlay = 'sos'; state.sosState = 'idle'; }
-          if (action === 'open-leave') { state.overlay = 'leave'; state.leaveStep = 1; }
-          if (action === 'open-inbox') { state.overlay = 'inbox'; }
-          
-          if (action === 'close-overlay') state.overlay = null;
-          if (action === 'trigger-sos') state.sosState = 'sent';
-          if (action === 'cancel-sos') { state.sosState = 'idle'; state.overlay = null; }
-          if (action === 'submit-room') state.roomStep = 2;
-          if (action === 'submit-move') state.moveStep = 2;
-          if (action === 'submit-leave') state.leaveStep = 2;
-          
-          render();
-        });
-      });
-    }
-
-    render();
   </script>
 </body>
 </html>

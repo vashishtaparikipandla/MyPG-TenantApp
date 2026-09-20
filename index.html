@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { display: none; }
+    
+    @keyframes pulse-ring {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .sos-pulse::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+      border-radius: 50%;
+      background-color: #ef4444;
+      animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] antialiased p-5 flex justify-center items-center min-h-screen">
+
+  <div class="relative w-[400px] h-[800px] bg-gray-50 rounded-[3rem] shadow-2xl border-[8px] border-gray-900 overflow-hidden flex flex-col">
+    <div class="absolute top-0 inset-x-0 h-7 bg-gray-900 w-40 mx-auto rounded-b-3xl z-50"></div>
+    <div id="app-root" class="flex-1 overflow-y-auto relative pt-10"></div>
+  </div>
+
+  <script>
+    let state = {
+      screen: 'persona', 
+      phone: '',
+      otp: '',
+      activeTab: 'home', 
+      overlay: null, // issues, food, sos, clean, laundry, roomchange, moveout
+      sosState: 'idle',
+      roomStep: 1, // 1=form, 2=status
+      moveStep: 1, // 1=form, 2=status
+    };
+
+    function render() {
+      const root = document.getElementById('app-root');
+      
+      if (state.overlay) {
+        root.innerHTML = renderOverlay();
+      } else {
+        if (state.screen === 'persona') root.innerHTML = renderPersonaPicker();
+        else if (state.screen === 'login') root.innerHTML = renderLogin();
+        else if (state.screen === 'home') root.innerHTML = renderHome();
+        else if (state.screen === 'join') root.innerHTML = renderJoin();
+        else if (state.screen === 'activation') root.innerHTML = renderActivation();
+        else if (state.screen === 'dashboard') root.innerHTML = renderDashboard();
+      }
+      
+      attachEvents();
+    }
+
+    function renderOverlay() {
+      if (state.overlay === 'issues') return renderIssues();
+      if (state.overlay === 'food') return renderFood();
+      if (state.overlay === 'sos') return renderSOS();
+      if (state.overlay === 'clean') return renderClean();
+      if (state.overlay === 'laundry') return renderLaundry();
+      if (state.overlay === 'roomchange') return renderRoomChange();
+      if (state.overlay === 'moveout') return renderMoveOut();
+      return '';
+    }
+
+    // -- New Overlays --
+
+    function renderRoomChange() {
+      if (state.roomStep === 1) {
+        return `
+          <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
+            <div class="flex items-center gap-3">
+              <button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button>
+              <h2 class="text-2xl font-bold">Change Room</h2>
+            </div>
+            
+            <p class="text-gray-500 font-medium text-sm">Request to change your bed or room type. Subject to owner approval and availability.</p>
+            
+            <div class="flex flex-col gap-4">
+              <label class="font-bold text-gray-700 text-sm">Type of Change</label>
+              <select class="w-full p-4 border border-gray-300 rounded-2xl font-medium bg-white">
+                <option>Change bed (same room)</option>
+                <option>Change room type (Upgrade/Downgrade)</option>
+                <option>Swap with a roommate</option>
+              </select>
+              
+              <label class="font-bold text-gray-700 text-sm mt-2">Preferred Room Type</label>
+              <select class="w-full p-4 border border-gray-300 rounded-2xl font-medium bg-white">
+                <option>Private AC</option>
+                <option>2-share AC</option>
+                <option>3-share Non-AC</option>
+              </select>
+
+              <label class="font-bold text-gray-700 text-sm mt-2">Reason (Confidential)</label>
+              <textarea class="w-full p-4 border border-gray-300 rounded-2xl font-medium h-24 resize-none" placeholder="Optional notes for owner..."></textarea>
+            </div>
+            
+            <button data-action="submit-room" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg mt-auto mb-6 shadow-sm active:bg-blue-700">Submit Request</button>
+          </div>
+        `;
+      }
+      return `
+        <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
+          <button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button>
+          <h2 class="text-2xl font-bold">Room Change Status</h2>
+          
+          <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm flex flex-col gap-5 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-yellow-50 rounded-full z-0 opacity-50"></div>
+            <div class="z-10">
+              <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block">Under Review</span>
+              <h3 class="text-xl font-bold text-gray-900 mt-2">Request to Upgrade</h3>
+              <p class="text-gray-500 font-medium text-sm mt-1">Requested to Private AC. The owner is checking availability.</p>
+            </div>
+            <button class="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-bold text-sm z-10 active:bg-gray-200">Withdraw Request</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMoveOut() {
+      if (state.moveStep === 1) {
+        return `
+          <div class="p-6 flex flex-col h-full bg-gray-50 gap-6 overflow-y-auto pb-12">
+            <div class="flex items-center gap-3">
+              <button data-action="close-overlay" class="text-blue-600 font-bold text-lg">← Back</button>
+              <h2 class="text-2xl font-bold">Move Out</h2>
+            </div>
+            
+            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 text-sm text-blue-800 font-medium">
+              Your agreement requires a <b>30-day notice period</b>. The earliest you can move out without penalty is <b>14 Nov</b>.
+            </div>
+            
+            <div class="flex flex-col gap-4">
+              <label class="font-bold text-gray-700 text-sm">Move Out Date</label>
+              <input type="date" class="w-full p-4 border border-gray-300 rounded-2xl font-medium" />
+              
+              <label class="font-bold text-gray-700 text-sm mt-2">Refund Account (UPI ID)</label>
+              <input type="text" class="w-full p-4 border border-gray-300 rounded-2xl font-medium" placeholder="yourname@upi" />
+
+              <label class="font-bold text-gray-700 text-sm mt-2">Reason for leaving</label>
+              <select class="w-full p-4 border border-gray-300 rounded-2xl font-medium bg-white">
+                <option>Job change</option>
+                <option>College ended</option>
+                <option>Relocating</option>
+                <option>Issues with PG</option>
+                <option>Other</option>
+              </select>
+            </div>
+            
+            <button data-action="submit-move" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold text-lg mt-6 shadow-sm active:bg-red-700">Submit Request</button>
+          </div>
+        `;
+      }
+      return `
+        <div class="p-6 flex flex-col h-full bg-gray-50 gap-6">
+          <button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button>
+          <h2 class="text-2xl font-bold">Move Out Status</h2>
+          
+          <div class="bg-red-50 p-6 rounded-3xl border border-red-200 shadow-sm flex flex-col gap-3">
+            <h3 class="text-2xl font-bold text-red-700">14 Nov 2026</h3>
+            <p class="text-red-800 font-medium text-sm">Move out date approved by owner.</p>
+            <div class="w-full bg-red-200 h-2 rounded-full mt-2"><div class="bg-red-600 h-2 rounded-full w-1/3"></div></div>
+            <p class="text-red-700 font-bold text-xs">23 days remaining in notice period</p>
+          </div>
+
+          <div class="bg-white p-5 border border-gray-200 rounded-2xl shadow-sm">
+            <h4 class="font-bold text-gray-900 mb-2">Exit Checklist</h4>
+            <div class="flex items-center gap-3 py-2 border-b border-gray-100">
+              <input type="checkbox" disabled class="w-5 h-5 rounded border-gray-300" />
+              <span class="text-sm font-medium text-gray-600">Room condition check (Pending)</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-gray-100">
+              <input type="checkbox" disabled class="w-5 h-5 rounded border-gray-300" />
+              <span class="text-sm font-medium text-gray-600">Key handover (Pending)</span>
+            </div>
+            <div class="flex items-center gap-3 py-2">
+              <input type="checkbox" disabled class="w-5 h-5 rounded border-gray-300" />
+              <span class="text-sm font-medium text-gray-600">Dues settlement (Pending)</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // -- Compacted Existing Screens --
+    function renderSOS() {
+      if (state.sosState === 'idle') {
+        return `<div class="p-6 flex flex-col h-full bg-red-50 gap-6 justify-center items-center text-center"><button data-action="close-overlay" class="absolute top-12 left-6 text-red-600 font-bold text-lg">← Back</button><h2 class="text-3xl font-bold text-red-700 mb-8">Emergency SOS</h2><div class="relative mb-12"><button data-action="trigger-sos" class="sos-pulse relative w-48 h-48 bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.5)] active:scale-95 transition cursor-pointer"><span class="text-white font-bold text-4xl">SOS</span></button></div><button class="w-full py-4 bg-white border-2 border-red-200 text-red-600 rounded-2xl font-bold text-lg shadow-sm">Call 112 (Police)</button></div>`;
+      }
+      return `<div class="p-6 flex flex-col h-full bg-red-600 gap-6 justify-center items-center text-center text-white"><h2 class="text-4xl font-bold mb-4">SOS Sent</h2><p class="font-medium text-lg text-red-100 px-4">Manager Ravi and your Guardian have been notified.</p><button data-action="cancel-sos" class="w-full py-4 bg-white text-red-600 rounded-2xl font-bold text-lg shadow-sm mt-auto mb-8">I'm safe (Close SOS)</button></div>`;
+    }
+    function renderClean() { return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button><h2 class="text-2xl font-bold">Cleaning</h2><div class="bg-white p-6 rounded-3xl border shadow-sm"><h3 class="font-bold text-lg">Next Scheduled Clean</h3><p class="text-gray-500 font-medium">Tomorrow, 10:00 AM</p></div></div>`; }
+    function renderLaundry() { return `<div class="p-6 flex flex-col h-full bg-gray-50 gap-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg w-fit">← Back</button><h2 class="text-2xl font-bold">Laundry</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-2 inline-block">In Process</span><h4 class="font-bold">12 Items (Bag)</h4></div></div>`; }
+    function renderIssues() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold mb-4">Issues</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold mb-2 inline-block">In Progress</span><h4 class="font-bold">AC not cooling</h4></div></div>`; }
+    function renderFood() { return `<div class="p-6"><button data-action="close-overlay" class="text-blue-600 font-bold text-lg mb-4">← Back</button><h2 class="text-2xl font-bold mb-4">Menu</h2><div class="bg-white p-5 border rounded-2xl shadow-sm"><div class="flex justify-between"><b>Lunch</b><span class="text-gray-400">🔒 Locked</span></div></div></div>`; }
+
+    function renderDashboard() {
+      return `
+        <div class="p-6 flex flex-col h-full overflow-y-auto pb-24">
+          <div class="flex justify-between items-center mb-2">
+            <div><h2 class="text-2xl font-bold">Sunrise PG</h2><p class="text-gray-500 font-medium">Room 204B, Tower A</p></div>
+            <div class="flex gap-2"><button data-action="open-sos" class="w-12 h-12 bg-red-100 text-red-600 border border-red-200 rounded-full flex items-center justify-center text-xs font-bold">SOS</button></div>
+          </div>
+          <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm mt-4">
+            <p class="text-gray-500 font-semibold uppercase text-xs mb-1">Rent Due</p><h3 class="text-3xl font-bold text-red-600">₹8,500</h3>
+          </div>
+          <div class="mt-6">
+            <h4 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h4>
+            <div class="grid grid-cols-3 gap-3">
+              <button data-action="open-issues" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🎫</span><span class="text-xs font-bold">Issue</span></button>
+              <button data-action="open-food" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🍲</span><span class="text-xs font-bold">Menu</span></button>
+              <button data-action="open-clean" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">✨</span><span class="text-xs font-bold">Clean</span></button>
+              <button data-action="open-laundry" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">👕</span><span class="text-xs font-bold">Laundry</span></button>
+              <button data-action="open-roomchange" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">🛏️</span><span class="text-xs font-bold">Room</span></button>
+              <button data-action="open-moveout" class="bg-red-50 p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center gap-2 active:scale-95"><span class="text-2xl">👋</span><span class="text-xs font-bold text-red-700">Exit PG</span></button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPersonaPicker() { return `<div class="p-6 flex flex-col justify-center h-full gap-8"><div><h1 class="text-3xl font-bold mb-2">Who is using this app?</h1><p class="text-gray-500 font-medium">Select your role</p></div><button data-action="nav-tenant" class="p-5 bg-white border border-gray-200 rounded-2xl flex items-center justify-between shadow-sm"><span class="font-semibold text-lg text-gray-800">Tenant</span><span class="text-xl text-gray-400">→</span></button></div>`; }
+    function renderLogin() { 
+      if (!state.phoneStep || state.phoneStep === 1) return `<div class="p-6 flex flex-col h-full mt-8 gap-8"><button data-action="nav-persona" class="text-blue-600 font-semibold w-fit">← Back</button><div><h2 class="text-3xl font-bold mb-2">Welcome</h2><p class="text-gray-500 font-medium text-lg">Enter your phone</p></div><input id="phone-input" type="tel" class="w-full p-4 border border-gray-300 rounded-2xl text-xl" placeholder="10-digit mobile number" value="${state.phone}" maxlength="10" /><button data-action="send-otp" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Get OTP</button></div>`;
+      return `<div class="p-6 flex flex-col h-full mt-8 gap-8"><button data-action="back-phone" class="text-blue-600 font-semibold w-fit">← Back</button><div><h2 class="text-3xl font-bold mb-2">Enter OTP</h2></div><input id="otp-input" type="number" class="w-full p-4 border border-gray-300 rounded-2xl text-2xl tracking-[0.5em] text-center" value="${state.otp}" maxlength="6" /><button data-action="verify-otp" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Verify</button></div>`;
+    }
+    function renderHome() { return `<div class="p-6 flex flex-col gap-6 h-full pb-20"><h2 class="text-3xl font-bold">Hi there,</h2><button data-action="nav-join" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg">Enter PG Code</button></div>`; }
+    function renderJoin() { return `<div class="p-6"><button data-action="nav-home" class="text-blue-600 font-bold">← Back</button></div>`; }
+    function renderActivation() { return `<div class="p-6"><h2 class="text-2xl font-bold">Onboarding</h2><button data-action="sign-agreement" class="w-full py-4 bg-gray-900 text-white mt-8 rounded-2xl">Skip & Activate</button></div>`; }
+
+    function attachEvents() {
+      const phoneInput = document.getElementById('phone-input');
+      if (phoneInput) phoneInput.addEventListener('input', e => { state.phone = e.target.value.replace(/\D/g, '').slice(0, 10); render(); document.getElementById('phone-input').focus(); });
+      
+      const otpInput = document.getElementById('otp-input');
+      if (otpInput) otpInput.addEventListener('input', e => { state.otp = e.target.value.replace(/\D/g, '').slice(0, 6); render(); document.getElementById('otp-input').focus(); });
+
+      document.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const action = e.currentTarget.dataset.action;
+          
+          if (action === 'nav-tenant') state.screen = 'login';
+          if (action === 'nav-persona') { state.screen = 'persona'; state.phoneStep = 1; state.phone = ''; state.otp = ''; }
+          if (action === 'send-otp') state.phoneStep = 2;
+          if (action === 'back-phone') state.phoneStep = 1;
+          
+          if (action === 'verify-otp') {
+            if (state.otp === '999999') { state.screen = 'dashboard'; state.activeTab = 'home'; }
+            else if (state.otp === '123456') { state.screen = 'activation'; state.actStep = 1; }
+            else state.screen = 'home';
+          }
+          
+          if (action === 'sign-agreement') { state.screen = 'dashboard'; state.activeTab = 'home'; }
+          
+          if (action === 'open-issues') state.overlay = 'issues';
+          if (action === 'open-food') state.overlay = 'food';
+          if (action === 'open-clean') state.overlay = 'clean';
+          if (action === 'open-laundry') state.overlay = 'laundry';
+          if (action === 'open-roomchange') { state.overlay = 'roomchange'; state.roomStep = 1; }
+          if (action === 'open-moveout') { state.overlay = 'moveout'; state.moveStep = 1; }
+          if (action === 'open-sos') { state.overlay = 'sos'; state.sosState = 'idle'; }
+          
+          if (action === 'close-overlay') state.overlay = null;
+          
+          if (action === 'trigger-sos') state.sosState = 'sent';
+          if (action === 'cancel-sos') { state.sosState = 'idle'; state.overlay = null; }
+          
+          if (action === 'submit-room') state.roomStep = 2;
+          if (action === 'submit-move') state.moveStep = 2;
+          
+          render();
+        });
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>

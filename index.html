@@ -30,8 +30,7 @@
     .screen.exit-left { transform: translateX(-30%); z-index: 10; opacity: 0.8; }
     
     .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.4); }
-    .glass-card { background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 100%); box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.8); }
-
+    
     .gradient-rent { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4); position: relative; overflow: hidden; }
     .gradient-rent::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); transform: rotate(30deg); pointer-events: none; }
 
@@ -55,10 +54,8 @@
     .lucide { stroke-width: 2.25; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-
     .hide-view { display: none; }
     .show-view { display: flex; }
-    
     .menu-day.active { background: #4F46E5; color: white; border-color: #4F46E5; }
   </style>
 </head>
@@ -99,53 +96,14 @@
       </div>
     </div>
 
-    <!-- 3. PROSPECT SCREEN -->
-    <div id="screen-prospect" class="screen">
-      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
-        <div>
-          <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Join a PG</h1>
-          <p class="text-lg text-gray-500 font-medium">Enter the 6-digit code provided by your PG manager.</p>
-          <div class="mt-12 space-y-3">
-            <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">PG Invite Code</label>
-            <input type="text" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-2xl font-bold text-center tracking-widest text-gray-900 uppercase" placeholder="A B C 1 2 3">
-          </div>
-        </div>
-        <button onclick="navTo('screen-activation')" class="pressable w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl">Find PG</button>
-      </div>
-    </div>
-
-    <!-- 4. ACTIVATION SCREEN -->
-    <div id="screen-activation" class="screen">
-      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
-        <div>
-          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 text-green-600"><i data-lucide="file-check-2" class="w-8 h-8"></i></div>
-          <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Sunrise PG</h1>
-          <p class="text-gray-500 font-medium mb-8">Room 204B, Tower A</p>
-          <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6">
-            <h3 class="font-bold text-gray-900 mb-2">Rental Agreement</h3>
-            <p class="text-sm text-gray-500 mb-4">Please review and digitally sign your rental agreement to complete onboarding.</p>
-            <button class="w-full py-3 bg-white border border-gray-300 rounded-xl font-bold text-sm text-gray-700 flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Read Document</button>
-          </div>
-          <label class="flex items-start gap-3">
-            <input type="checkbox" class="mt-1 w-5 h-5 rounded border-gray-300 text-indigo-600">
-            <span class="text-sm font-medium text-gray-600">I agree to the terms and conditions set forth in the rental agreement.</span>
-          </label>
-        </div>
-        <button onclick="navTo('screen-main')" class="pressable w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl">Accept & Activate</button>
-      </div>
-    </div>
-
     <!-- 5. MAIN DASHBOARD -->
     <div id="screen-main" class="screen bg-[#F8FAFC]">
       
-      <!-- Sticky Header -->
+      <!-- Redesigned Clean Header -->
       <div class="glass fixed top-0 w-full pt-14 pb-4 px-6 z-30 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <img src="https://i.pravatar.cc/150?img=11" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover" />
-          <div>
-            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Good Morning,</p>
-            <h2 class="text-base font-extrabold text-gray-900 leading-tight">Rohit Verma</h2>
-          </div>
+        <div>
+          <h2 class="text-xl font-extrabold text-gray-900 leading-tight">Hi, Rohit</h2>
+          <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Tuesday, 14 Oct</p>
         </div>
         <div class="flex gap-2 text-gray-700">
           <button onclick="openSheet('sheet-inbox')" class="pressable w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm relative">
@@ -158,21 +116,18 @@
       </div>
 
       <!-- TAB 1: HOME -->
-      <div id="tab-home" class="scroll-area pt-32 px-6 tab-content active">
+      <div id="tab-home" class="scroll-area pt-28 px-6 tab-content active">
         
-        <!-- Room Info Banner -->
-        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex items-center justify-between mb-6 shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
-            <div>
-              <h3 class="font-bold text-indigo-900 leading-tight">Sunrise PG (Tower A)</h3>
-              <p class="text-xs font-semibold text-indigo-700">Room 204B • Double Sharing</p>
-            </div>
+        <!-- Announcements / Noticeboard -->
+        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex gap-3 mb-6 shadow-sm items-start">
+          <i data-lucide="megaphone" class="w-5 h-5 text-indigo-600 shrink-0 mt-0.5"></i>
+          <div>
+            <h4 class="font-bold text-indigo-900 text-sm">Water supply maintenance</h4>
+            <p class="text-xs text-indigo-700 mt-1 font-medium">Water will be unavailable from 2 PM to 4 PM today due to tank cleaning.</p>
           </div>
-          <button onclick="openSheet('sheet-roommates')" class="text-xs font-bold text-indigo-600 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-indigo-100 pressable">Roommates</button>
         </div>
 
-        <div class="gradient-rent rounded-3xl p-6 mb-8">
+        <div class="gradient-rent rounded-3xl p-6 mb-6">
           <div class="flex justify-between items-start mb-4">
             <div>
               <p class="text-indigo-200 text-sm font-semibold mb-1">Upcoming Rent</p>
@@ -182,12 +137,36 @@
           </div>
           <div class="flex gap-3 mt-6">
             <button class="pressable flex-1 py-3.5 bg-white text-gray-900 rounded-xl font-bold shadow-lg text-sm">Pay via UPI</button>
-            <button class="pressable flex-1 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm">Mark as Cash</button>
+            <button class="pressable flex-1 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm">Log Cash</button>
           </div>
         </div>
 
-        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">Quick Actions</h4>
-        <div class="grid grid-cols-4 gap-4 mb-8">
+        <!-- Open Room & Roommates Details -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 mb-6">
+          <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
+            <div>
+              <h4 class="font-extrabold text-gray-900 text-lg">Room 204B</h4>
+              <p class="text-xs text-gray-500 font-bold uppercase mt-1 tracking-wider">Double Sharing • Sunrise PG</p>
+            </div>
+            <!-- WiFi quick access moved here since it belongs to the room -->
+            <button onclick="openSheet('sheet-wifi')" class="flex flex-col items-center gap-1 text-indigo-600 pressable">
+              <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center"><i data-lucide="wifi" class="w-5 h-5"></i></div>
+            </button>
+          </div>
+          
+          <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Roommates</h5>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-bold">K</div>
+              <p class="font-bold text-gray-900">Karthik</p>
+            </div>
+            <button class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-bold flex items-center gap-2 pressable"><i data-lucide="phone" class="w-3 h-3"></i> Call</button>
+          </div>
+        </div>
+
+        <!-- Quick Actions (Only Daily Needs) -->
+        <h4 class="text-lg font-bold text-gray-900 mb-3 px-1">Quick Actions</h4>
+        <div class="grid grid-cols-4 gap-4 mb-6">
           <button onclick="openSheet('sheet-food')" class="pressable flex flex-col items-center gap-2">
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="utensils" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">Menu</span>
@@ -205,51 +184,16 @@
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="package" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">Parcels</span>
           </button>
-          <button onclick="openSheet('sheet-leave')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="plane" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Leave</span>
-          </button>
-          <button onclick="openSheet('sheet-room-change')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="bed" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Room</span>
-          </button>
-          <button onclick="openSheet('sheet-wifi')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="wifi" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">WiFi</span>
-          </button>
-          <button onclick="openSheet('sheet-pg-info')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="info" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">About PG</span>
-          </button>
-        </div>
-
-        <!-- Ongoing Tasks -->
-        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">Ongoing</h4>
-        <div class="flex flex-col gap-3">
-          <div class="glass-card p-4 rounded-2xl flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center"><i data-lucide="ticket" class="w-5 h-5"></i></div>
-              <div>
-                <p class="font-bold text-gray-900">AC not cooling (Room)</p>
-                <p class="text-xs font-semibold text-gray-500 mt-0.5">Assigned to Ravi (Tech)</p>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 bg-orange-100 text-orange-800 rounded-lg text-[10px] font-bold uppercase">In Progress</span>
-          </div>
         </div>
       </div>
 
-      <!-- TAB 2: PAYMENTS (Ledger) -->
+      <!-- TAB 2: PAYMENTS -->
       <div id="tab-payments" class="scroll-area pt-28 px-6 tab-content">
         <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Payments</h2>
         
         <div class="bg-red-50 border border-red-100 rounded-3xl p-6 mb-8 shadow-sm">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <p class="text-red-800 text-sm font-semibold mb-1">Overdue Amount</p>
-              <h3 class="text-4xl font-extrabold text-red-600">₹2,500</h3>
-            </div>
-          </div>
+          <p class="text-red-800 text-sm font-semibold mb-1">Overdue Amount</p>
+          <h3 class="text-4xl font-extrabold text-red-600 mb-4">₹2,500</h3>
           <p class="text-red-700 text-sm font-medium mb-4">Pending electricity bill from last month.</p>
           <button class="pressable w-full py-3.5 bg-red-600 text-white rounded-xl font-bold shadow-lg text-sm">Pay Now</button>
         </div>
@@ -263,48 +207,46 @@
             </div>
             <div class="text-right flex items-center gap-3"><span class="font-bold text-gray-900">₹8,500</span><button class="text-indigo-600"><i data-lucide="download" class="w-5 h-5"></i></button></div>
           </div>
-          <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></div>
-              <div><p class="font-bold text-gray-900">Security Deposit</p><p class="text-xs font-medium text-gray-500 mt-0.5">Paid on 1 Aug</p></div>
-            </div>
-            <div class="text-right flex items-center gap-3"><span class="font-bold text-gray-900">₹15,000</span><button class="text-indigo-600"><i data-lucide="download" class="w-5 h-5"></i></button></div>
-          </div>
         </div>
       </div>
 
-      <!-- TAB 3: PROFILE -->
+      <!-- TAB 3: PROFILE (Redesigned IA) -->
       <div id="tab-profile" class="scroll-area pt-28 px-6 tab-content">
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Profile</h2>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">My Profile</h2>
+        <p class="text-gray-500 font-medium mb-6">+91 9999999999</p>
         
-        <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm flex items-center gap-5 mb-8">
-          <img src="https://i.pravatar.cc/150?img=11" class="w-16 h-16 rounded-full object-cover" />
-          <div>
-            <h3 class="text-xl font-extrabold text-gray-900">Rohit Verma</h3>
-            <p class="text-sm font-medium text-gray-500">+91 9999999999</p>
-            <span class="inline-block mt-2 px-2 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded-lg">Active Tenant</span>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-8">
-          <button onclick="openSheet('sheet-stays')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="history" class="w-5 h-5 text-indigo-500"></i> My Stays</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+        <!-- Section 1: Specific to this Hostel -->
+        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-2">Sunrise PG Details</h4>
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+          <button onclick="openSheet('sheet-pg-info')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="info" class="w-5 h-5 text-gray-400"></i> Amenities & House Rules</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
           </button>
           <button onclick="openSheet('sheet-docs')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="file-check" class="w-5 h-5 text-indigo-500"></i> Documents & KYC</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="file-check" class="w-5 h-5 text-gray-400"></i> Rental Agreement & KYC</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
           </button>
-          <button onclick="openSheet('sheet-refer')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="gift" class="w-5 h-5 text-indigo-500"></i> Refer a Friend</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          <button onclick="openSheet('sheet-leave')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="plane" class="w-5 h-5 text-gray-400"></i> Declare Leave</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
           </button>
-          <button onclick="openSheet('sheet-pg-info')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="info" class="w-5 h-5 text-indigo-500"></i> About PG (Amenities & Rules)</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-          </button>
-          <button onclick="openSheet('sheet-moveout')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-red-600 font-bold"><i data-lucide="log-out" class="w-5 h-5 text-red-500"></i> Exit PG (Move Out)</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          <button onclick="openSheet('sheet-moveout')" class="w-full p-4 flex items-center justify-between pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-red-600 font-bold"><i data-lucide="log-out" class="w-5 h-5 text-red-400"></i> Request Move Out</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
           </button>
         </div>
 
-        <button onclick="navTo('screen-login')" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold pressable">Log Out</button>
+        <!-- Section 2: App/Service Specific -->
+        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-2">App & Account</h4>
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+          <button onclick="openSheet('sheet-stays')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="history" class="w-5 h-5 text-gray-400"></i> My Stay History</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+          </button>
+          <button onclick="openSheet('sheet-refer')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="gift" class="w-5 h-5 text-gray-400"></i> Refer & Earn</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+          </button>
+          <button onclick="openSheet('sheet-help')" class="w-full p-4 flex items-center justify-between pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i> Help & FAQs</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
+          </button>
+        </div>
+
+        <button onclick="navTo('screen-login')" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold pressable mb-4">Log Out</button>
       </div>
 
       <!-- Bottom Nav (Sticky) -->
@@ -321,276 +263,137 @@
       </div>
     </div>
 
-    <!-- BOTTOM SHEETS (Overlays) -->
+    <!-- BOTTOM SHEETS -->
     <div id="sheet-overlay" class="sheet-overlay" onclick="closeSheet()"></div>
 
-    <!-- 1. FOOD SHEET (Weekly Menu) -->
-    <div id="sheet-food" class="sheet">
+    <!-- 1. FOOD SHEET (Redesigned Compact View) -->
+    <div id="sheet-food" class="sheet !h-[90%]">
       <div class="sheet-handle"></div>
       <div class="px-6 pb-4 border-b border-gray-100 flex flex-col mt-2">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-extrabold text-gray-900">Food Menu</h2>
           <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
-        <!-- Weekly Tabs -->
+        <!-- Weekly Scroll -->
         <div class="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
           <button class="menu-day active min-w-[3.5rem] p-2 rounded-xl border border-gray-200 flex flex-col items-center pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Mon</span><span class="text-sm font-extrabold">12</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Mon</span><span class="text-sm font-extrabold">14</span>
           </button>
           <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Tue</span><span class="text-sm font-extrabold">13</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Tue</span><span class="text-sm font-extrabold">15</span>
           </button>
           <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Wed</span><span class="text-sm font-extrabold">14</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Wed</span><span class="text-sm font-extrabold">16</span>
           </button>
           <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Thu</span><span class="text-sm font-extrabold">15</span>
-          </button>
-          <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Fri</span><span class="text-sm font-extrabold">16</span>
+            <span class="text-[10px] font-bold uppercase tracking-wide">Thu</span><span class="text-sm font-extrabold">17</span>
           </button>
         </div>
-      </div>
-      <div class="scroll-area p-6 space-y-4 bg-gray-50">
-        <!-- Lunch -->
-        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-3"><span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Locked</span></div>
-          <h3 class="text-xl font-extrabold mb-1">Lunch <span class="text-sm text-gray-400 font-medium ml-2">12:30 - 2:30 PM</span></h3>
-          <p class="text-gray-500 text-sm font-medium mb-4 pr-16">Paneer Butter Masala, Dal, Roti, Rice</p>
-          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
-            <span class="font-bold text-green-700 text-sm">Available for you</span>
-            <div class="w-12 h-6 bg-green-500 rounded-full opacity-50"><div class="w-5 h-5 bg-white rounded-full ml-6 mt-0.5"></div></div>
-          </div>
-        </div>
-        <!-- Dinner -->
-        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm relative">
-          <div class="absolute top-0 right-0 p-3"><span class="text-indigo-600 text-xs font-bold flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Locks in 4h</span></div>
-          <h3 class="text-xl font-extrabold mb-1">Dinner <span class="text-sm text-gray-400 font-medium ml-2">8:00 - 10:30 PM</span></h3>
-          <p class="text-gray-500 text-sm font-medium mb-4 pr-16">Aloo Gobi, Dal Tadka, Rice, Gulab Jamun</p>
-          <div class="flex items-center justify-between p-3 bg-green-50 rounded-2xl border border-green-100">
-            <span class="font-bold text-green-700 text-sm">Available for you</span>
-            <div class="pressable w-12 h-6 bg-green-500 rounded-full shadow-inner"><div class="w-5 h-5 bg-white rounded-full ml-6 mt-0.5 shadow-sm"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. ISSUES SHEET (Full Logging Flow) -->
-    <div id="sheet-issues" class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2" id="issues-title"><i data-lucide="ticket" class="w-6 h-6"></i> Issues</h2>
-        <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       
-      <!-- List View -->
-      <div id="issues-list-view" class="scroll-area p-6 flex-col show-view">
-        <div class="bg-white p-5 rounded-2xl border mb-6 shadow-sm">
-          <div class="flex justify-between items-start mb-2">
-            <h4 class="font-bold text-lg text-gray-900">AC not cooling</h4>
-            <span class="text-[10px] font-bold px-2 py-1 bg-orange-100 text-orange-800 rounded-lg uppercase">In Progress</span>
-          </div>
-          <p class="text-gray-500 text-sm mb-3">Room 204B • Raised yesterday</p>
-          <p class="text-xs font-semibold text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100">Assigned to Ravi (Electrician). He will visit at 4 PM today.</p>
-        </div>
-        <button onclick="toggleIssueView('form')" class="pressable w-full py-4 bg-gray-900 text-white rounded-xl font-bold shadow-lg mt-auto mb-4 flex justify-center items-center gap-2"><i data-lucide="plus" class="w-5 h-5"></i> Raise New Issue</button>
-      </div>
-
-      <!-- Form View -->
-      <div id="issues-form-view" class="scroll-area p-6 flex-col hide-view bg-gray-50">
-        <label class="text-xs font-bold text-gray-500 uppercase">Category</label>
-        <select class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-semibold text-gray-900">
-          <option>Electrical</option><option>Plumbing</option><option>Cleaning</option><option>WiFi</option><option>Furniture</option><option>Other</option>
-        </select>
-
-        <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
-        <textarea class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-medium text-gray-900 resize-none h-24" placeholder="Describe the issue in detail..."></textarea>
-
-        <label class="text-xs font-bold text-gray-500 uppercase">Photo (Optional)</label>
-        <button class="w-full p-4 bg-white rounded-xl border border-gray-200 border-dashed mb-6 mt-1 font-semibold text-indigo-600 flex items-center justify-center gap-2"><i data-lucide="camera" class="w-5 h-5"></i> Add Photo</button>
-
-        <div class="flex gap-3 mt-auto">
-          <button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-gray-200 text-gray-700 rounded-xl font-bold">Cancel</button>
-          <button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg">Submit</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. PARCELS SHEET (Photo + Mark Collected) -->
-    <div id="sheet-parcels" class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="package" class="w-6 h-6"></i> Parcels</h2>
-        <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <div class="scroll-area p-6 flex flex-col bg-gray-50">
-        
-        <div id="parcel-card" class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-          <div class="h-32 bg-gray-100 -mx-5 -mt-5 mb-4 flex items-center justify-center relative border-b border-gray-200">
-            <!-- Simulated package photo -->
-            <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80" class="w-full h-full object-cover opacity-80" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            <span class="absolute bottom-3 left-4 text-white font-bold drop-shadow-md">Amazon Delivery</span>
-          </div>
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h4 class="font-extrabold text-lg text-gray-900">Received at Reception</h4>
-              <p class="text-gray-500 text-sm font-medium">Today at 2:15 PM by Guard Ram</p>
-            </div>
-            <span class="w-2 h-2 bg-red-500 rounded-full mt-2"></span>
-          </div>
-          <button id="parcel-collect-btn" onclick="collectParcel()" class="pressable w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 flex justify-center items-center gap-2">
-            <i data-lucide="check-circle" class="w-5 h-5"></i> Mark as Collected
-          </button>
-        </div>
-        
-        <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">Past History</h4>
-        <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between opacity-70">
-          <div><p class="font-bold text-gray-900">Myntra Package</p><p class="text-xs text-gray-500">Collected on 10 Oct</p></div>
-          <i data-lucide="check" class="text-green-500 w-5 h-5"></i>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 4. ROOMMATES & ROOM SHEET -->
-    <div id="sheet-roommates" class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="users" class="w-6 h-6"></i> My Room</h2>
-        <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
+      <!-- Day View (Both meals side-by-side or stacked cleanly) -->
       <div class="scroll-area p-6 bg-gray-50">
-        <div class="bg-indigo-600 text-white p-5 rounded-3xl mb-6 shadow-lg shadow-indigo-200">
-          <p class="text-indigo-200 text-sm font-bold uppercase tracking-wider mb-1">Sunrise PG, Tower A</p>
-          <h3 class="text-3xl font-extrabold mb-1">Room 204B</h3>
-          <p class="text-indigo-100 font-medium">Double Sharing AC Room</p>
-        </div>
+        <h4 class="font-bold text-gray-400 uppercase tracking-widest text-xs mb-3 ml-1">Today's Meals</h4>
         
-        <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">Roommates</h4>
-        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between mb-3">
-          <div class="flex items-center gap-3">
-            <img src="https://i.pravatar.cc/150?img=12" class="w-10 h-10 rounded-full" />
-            <h4 class="font-bold text-gray-900 text-lg">Karthik</h4>
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-4">
+          <!-- LUNCH -->
+          <div class="p-4 border-b border-gray-100 flex flex-col">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="font-extrabold text-gray-900 text-lg">Lunch <span class="text-xs text-gray-400 font-medium ml-2">12:30 PM</span></h4>
+              <span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Locked</span>
+            </div>
+            <p class="text-gray-500 text-sm font-medium mb-3">Paneer Butter Masala, Dal, Roti, Rice</p>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <span class="font-bold text-green-700 text-sm">You are opted IN</span>
+              <div class="w-10 h-5 bg-green-500 rounded-full opacity-50 relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div></div>
+            </div>
           </div>
-          <button class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center pressable"><i data-lucide="phone" class="w-5 h-5"></i></button>
-        </div>
-        
-        <div class="bg-gray-100 p-4 rounded-2xl border border-gray-200 border-dashed flex items-center justify-center">
-          <span class="text-gray-500 font-bold text-sm">Bed B is currently yours</span>
+          
+          <!-- DINNER -->
+          <div class="p-4 flex flex-col">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="font-extrabold text-gray-900 text-lg">Dinner <span class="text-xs text-gray-400 font-medium ml-2">8:00 PM</span></h4>
+              <span class="text-indigo-600 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Locks in 4h</span>
+            </div>
+            <p class="text-gray-500 text-sm font-medium mb-3">Aloo Gobi, Dal Tadka, Rice, Gulab Jamun</p>
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
+              <span class="font-bold text-green-700 text-sm">You are opted IN</span>
+              <div class="pressable w-10 h-5 bg-green-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow-sm"></div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 5. PG INFO (Amenities & Rules) -->
+    <!-- Help & FAQs Sheet -->
+    <div id="sheet-help" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="help-circle" class="w-6 h-6"></i> Help & FAQs</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+    <div class="scroll-area p-6 bg-gray-50 space-y-4">
+      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+        <h4 class="font-bold text-gray-900">What is the Move Out policy?</h4>
+        <p class="text-sm text-gray-500 mt-2">You must provide a 30-day notice via the app. The security deposit will be settled after room inspection on your exit date.</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+        <h4 class="font-bold text-gray-900">How do I change my room?</h4>
+        <p class="text-sm text-gray-500 mt-2">Speak to your manager to see if beds are available. If approved, they will change it in the system.</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+        <h4 class="font-bold text-gray-900">Can guests stay over?</h4>
+        <p class="text-sm text-gray-500 mt-2">No, outside guests are only permitted in the lobby area during daytime hours.</p>
+      </div>
+    </div></div>
+
+    <!-- PG INFO (Amenities & Rules) -->
     <div id="sheet-pg-info" class="sheet">
       <div class="sheet-handle"></div>
       <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
-        <h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="info" class="w-6 h-6"></i> About PG</h2>
+        <h2 class="text-2xl font-extrabold text-gray-900">About PG</h2>
         <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="scroll-area p-6 bg-gray-50">
-        
         <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">Amenities</h4>
         <div class="grid grid-cols-2 gap-3 mb-8">
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm text-center">
-            <i data-lucide="wifi" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">High-Speed WiFi</span>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm text-center">
-            <i data-lucide="wind" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Air Conditioning</span>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm text-center">
-            <i data-lucide="zap" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Power Backup</span>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm text-center">
-            <i data-lucide="dumbbell" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">In-house Gym</span>
-          </div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="wifi" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">WiFi</span></div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="wind" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">AC</span></div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="zap" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Power Backup</span></div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="dumbbell" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Gym</span></div>
         </div>
-        
         <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">House Rules</h4>
         <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-          <div class="flex items-start gap-3">
-            <i data-lucide="clock" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i>
-            <div><p class="font-bold text-gray-900 text-sm">Curfew: 11:30 PM</p><p class="text-xs text-gray-500">Main gate locked at night.</p></div>
-          </div>
-          <div class="flex items-start gap-3">
-            <i data-lucide="ban" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i>
-            <div><p class="font-bold text-gray-900 text-sm">No Smoking/Alcohol</p><p class="text-xs text-gray-500">Strictly prohibited inside premises.</p></div>
-          </div>
-          <div class="flex items-start gap-3">
-            <i data-lucide="users" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i>
-            <div><p class="font-bold text-gray-900 text-sm">No Outside Guests</p><p class="text-xs text-gray-500">Guests must meet in the lobby area only.</p></div>
-          </div>
+          <div class="flex items-start gap-3"><i data-lucide="clock" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-gray-900 text-sm">Curfew: 11:30 PM</p><p class="text-xs text-gray-500">Main gate locked at night.</p></div></div>
+          <div class="flex items-start gap-3"><i data-lucide="ban" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-gray-900 text-sm">No Smoking/Alcohol</p><p class="text-xs text-gray-500">Strictly prohibited.</p></div></div>
         </div>
       </div>
     </div>
 
-    <!-- PROFILE SHEETS -->
-    <!-- Stays -->
-    <div id="sheet-stays" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="history" class="w-6 h-6"></i> My Stays</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
+    <!-- My Stays (Various PGs) -->
+    <div id="sheet-stays" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="history" class="w-6 h-6"></i> Stay History</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
     <div class="scroll-area p-6 bg-gray-50">
+      <p class="text-sm text-gray-500 mb-6 font-medium">Your private record of all stays across PG Wonders partner properties.</p>
       <div class="bg-white p-5 rounded-2xl border border-indigo-200 shadow-sm mb-4 border-l-4 border-l-indigo-600">
-        <span class="text-xs font-bold text-indigo-600 uppercase">Current Stay</span>
-        <h4 class="font-bold text-lg mt-1">Sunrise PG</h4>
-        <p class="text-sm text-gray-500">Move-in: 1 Aug 2026</p>
+        <div class="flex justify-between items-start"><h4 class="font-bold text-lg text-gray-900">Sunrise PG</h4><span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase">Current</span></div>
+        <p class="text-sm text-gray-500 mt-1">Delhi • Move-in: Aug 2026</p>
       </div>
-      <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm opacity-70">
-        <span class="text-xs font-bold text-gray-500 uppercase">Past Stay</span>
-        <h4 class="font-bold text-lg mt-1">Green Valley Hostel</h4>
-        <p class="text-sm text-gray-500">Mar 2025 - Jul 2026</p>
+      <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm opacity-80 mb-4">
+        <div class="flex justify-between items-start"><h4 class="font-bold text-lg text-gray-900">Green Valley Hostel</h4><span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded uppercase">Past Stay</span></div>
+        <p class="text-sm text-gray-500 mt-1">Bangalore • Mar 2025 - Jul 2026</p>
       </div>
     </div></div>
+    
+    <!-- Minor Sheets (Issues, Docs, Parcels, Leave, WiFi, Moveout, Inbox, SOS) -->
+    <div id="sheet-issues" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900" id="issues-title">Issues</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button></div><div id="issues-list-view" class="scroll-area p-6 flex-col show-view"><div class="bg-white p-5 rounded-2xl border mb-6 shadow-sm"><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-lg text-gray-900">AC not cooling</h4><span class="text-[10px] font-bold px-2 py-1 bg-orange-100 text-orange-800 rounded-lg uppercase">In Progress</span></div><p class="text-gray-500 text-sm mb-3">Room 204B • Raised yesterday</p><p class="text-xs font-semibold text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100">Assigned to Ravi. He will visit at 4 PM today.</p></div><button onclick="toggleIssueView('form')" class="pressable w-full py-4 bg-gray-900 text-white rounded-xl font-bold shadow-lg mt-auto mb-4 flex justify-center items-center gap-2"><i data-lucide="plus" class="w-5 h-5"></i> Raise New Issue</button></div><div id="issues-form-view" class="scroll-area p-6 flex-col hide-view bg-gray-50"><label class="text-xs font-bold text-gray-500 uppercase">Category</label><select class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-semibold text-gray-900"><option>Electrical</option><option>Plumbing</option><option>Cleaning</option><option>WiFi</option></select><label class="text-xs font-bold text-gray-500 uppercase">Description</label><textarea class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-medium text-gray-900 resize-none h-24" placeholder="Describe the issue..."></textarea><div class="flex gap-3 mt-auto"><button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-gray-200 text-gray-700 rounded-xl font-bold">Cancel</button><button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg">Submit</button></div></div></div>
 
-    <!-- Docs -->
-    <div id="sheet-docs" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="file-check" class="w-6 h-6"></i> Documents</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-    <div class="scroll-area p-6 bg-gray-50 space-y-4">
-      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex justify-between items-center">
-        <div><h4 class="font-bold text-gray-900">Aadhaar Card</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Verified ✓</p></div>
-        <button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="eye" class="w-5 h-5"></i></button>
-      </div>
-      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex justify-between items-center">
-        <div><h4 class="font-bold text-gray-900">Rental Agreement</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Signed ✓</p></div>
-        <button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="download" class="w-5 h-5"></i></button>
-      </div>
-    </div></div>
+    <div id="sheet-parcels" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Parcels</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 flex flex-col bg-gray-50"><div id="parcel-card" class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="h-32 bg-gray-100 -mx-5 -mt-5 mb-4 flex items-center justify-center relative border-b border-gray-200"><img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80" class="w-full h-full object-cover opacity-80" /><div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div><span class="absolute bottom-3 left-4 text-white font-bold drop-shadow-md">Amazon Delivery</span></div><div class="flex justify-between items-start mb-4"><div><h4 class="font-extrabold text-lg text-gray-900">Received at Reception</h4><p class="text-gray-500 text-sm font-medium">Today at 2:15 PM</p></div></div><button id="parcel-collect-btn" onclick="collectParcel()" class="pressable w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> Mark as Collected</button></div></div></div>
+    
+    <div id="sheet-docs" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Documents</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 bg-gray-50 space-y-4"><div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Aadhaar Card</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Verified ✓</p></div><button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="eye" class="w-5 h-5"></i></button></div><div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Rental Agreement</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Signed ✓</p></div><button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="download" class="w-5 h-5"></i></button></div></div></div>
 
-    <!-- Refer -->
-    <div id="sheet-refer" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="gift" class="w-6 h-6"></i> Refer & Earn</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-    <div class="scroll-area p-6 bg-gray-50 text-center">
-      <div class="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="gift" class="w-12 h-12"></i></div>
-      <h3 class="text-2xl font-extrabold mb-2">Get ₹500 Off Rent</h3>
-      <p class="text-gray-500 font-medium mb-8">Share your code. When a friend joins and stays for 30 days, you both get a ₹500 discount on your next rent.</p>
-      <div class="bg-white border border-gray-200 p-4 rounded-2xl mb-6 shadow-sm">
-        <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Your Referral Code</p>
-        <h4 class="text-3xl font-extrabold text-indigo-600 tracking-widest">ROHIT500</h4>
-      </div>
-      <button class="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 pressable"><i data-lucide="share-2" class="w-5 h-5"></i> Share via WhatsApp</button>
-    </div></div>
+    <div id="sheet-refer" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Refer & Earn</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 bg-gray-50 text-center"><div class="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="gift" class="w-12 h-12"></i></div><h3 class="text-2xl font-extrabold mb-2">Get ₹500 Off Rent</h3><p class="text-gray-500 font-medium mb-8">When a friend joins, you both get a ₹500 discount.</p><div class="bg-white border p-4 rounded-2xl mb-6 shadow-sm"><p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Your Code</p><h4 class="text-3xl font-extrabold text-indigo-600 tracking-widest">ROHIT500</h4></div><button class="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold shadow-lg flex items-center justify-center gap-2"><i data-lucide="share-2" class="w-5 h-5"></i> WhatsApp</button></div></div>
 
-    <!-- Minor Operations Sheets -->
-    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="sparkles"></i> Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold text-gray-700">Skip Tomorrow</button></div></div></div>
-    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="plane"></i> Leave</h2><p class="text-gray-500 mb-4 font-medium text-sm">Pause meals and cleaning while away.</p><label class="font-bold text-xs text-gray-500 uppercase">Start Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3 mt-1 font-bold text-gray-900"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit Request</button></div></div>
-    <div id="sheet-room-change" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bed"></i> Room Change</h2><p class="text-gray-500 mb-4 font-medium text-sm">Request a different bed or room type within this property.</p><select class="w-full p-4 bg-gray-50 rounded-xl border mb-6 font-bold text-gray-900"><option>Single Room</option><option>Double Sharing</option></select><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Request Change</button></div></div>
-    <div id="sheet-wifi" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="wifi"></i> WiFi Details</h2><div class="bg-white p-5 rounded-2xl border flex flex-col gap-3 shadow-sm"><div class="flex justify-between"><span class="text-gray-500 font-bold text-sm">Network</span><span class="font-bold text-gray-900">Sunrise_5G</span></div><div class="flex justify-between items-center"><span class="text-gray-500 font-bold text-sm">Password</span><span class="font-bold tracking-widest text-xl text-gray-900">••••••••</span></div></div><button class="w-full py-4 bg-gray-900 text-white mt-6 rounded-xl font-bold flex items-center justify-center gap-2 pressable"><i data-lucide="copy" class="w-5 h-5"></i> Copy Password</button></div></div>
-    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2 text-red-600"><i data-lucide="log-out"></i> Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4 border border-red-100">Requires 30 days notice to avoid penalty.</p><label class="font-bold text-xs text-gray-500 uppercase">Target Exit Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-6 mt-1 font-bold text-gray-900"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200">Initiate Exit Process</button></div></div>
-    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bell"></i> Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1 text-gray-900">Power Outage Tomorrow</h4><p class="text-sm text-gray-600 mt-1">Maintenance from 2 PM to 5 PM.</p></div></div></div>
-
-    <!-- SOS Sheet -->
-    <div id="sheet-sos" class="sheet !bg-red-600 !h-[90%]">
-      <div class="sheet-handle !bg-red-400"></div>
-      <div class="px-6 mt-4 flex justify-between items-center">
-        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2"><i data-lucide="shield-alert" class="w-6 h-6"></i> Emergency SOS</h2>
-        <button onclick="closeSheet()" class="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center font-bold text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        <div class="relative w-56 h-56 flex items-center justify-center mb-12">
-          <div class="absolute inset-0 bg-red-500 rounded-full sos-ring"></div>
-          <button class="pressable w-48 h-48 bg-white text-red-600 rounded-full flex items-center justify-center shadow-2xl relative z-10 border-8 border-red-500"><span class="font-extrabold text-5xl">SOS</span></button>
-        </div>
-        <p class="text-red-100 font-medium text-lg px-4 mb-10">Press and hold to instantly alert the Manager, Security, and your Guardian.</p>
-        <button class="pressable w-full py-4 bg-red-800 text-white rounded-2xl font-bold text-lg border border-red-500 flex justify-center items-center gap-2"><i data-lucide="phone" class="w-5 h-5"></i> Call 112 (Police)</button>
-      </div>
-    </div>
+    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold text-gray-700">Skip Tomorrow</button></div></div></div>
+    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Leave</h2><p class="text-gray-500 mb-4 font-medium text-sm">Pause meals and cleaning while away.</p><label class="font-bold text-xs text-gray-500 uppercase">Start Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3 mt-1 font-bold text-gray-900"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit</button></div></div>
+    <div id="sheet-wifi" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">WiFi Details</h2><div class="bg-white p-5 rounded-2xl border flex flex-col gap-3 shadow-sm"><div class="flex justify-between"><span class="text-gray-500 font-bold text-sm">Network</span><span class="font-bold text-gray-900">Sunrise_5G</span></div><div class="flex justify-between items-center"><span class="text-gray-500 font-bold text-sm">Password</span><span class="font-bold tracking-widest text-xl text-gray-900">••••••••</span></div></div><button class="w-full py-4 bg-gray-900 text-white mt-6 rounded-xl font-bold flex items-center justify-center gap-2 pressable"><i data-lucide="copy" class="w-5 h-5"></i> Copy Password</button></div></div>
+    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 text-red-600">Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4 border border-red-100">Requires 30 days notice to avoid penalty.</p><label class="font-bold text-xs text-gray-500 uppercase">Target Exit Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-6 mt-1 font-bold"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold shadow-lg">Initiate Exit Process</button></div></div>
+    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1 text-gray-900">Power Outage Tomorrow</h4><p class="text-sm text-gray-600 mt-1">Maintenance from 2 PM to 5 PM.</p></div></div></div>
+    <div id="sheet-sos" class="sheet !bg-red-600 !h-[90%]"><div class="sheet-handle !bg-red-400"></div><div class="px-6 mt-4 flex justify-between items-center"><h2 class="text-2xl font-extrabold text-white">Emergency SOS</h2><button onclick="closeSheet()" class="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center font-bold text-white"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="flex-1 flex flex-col items-center justify-center p-6 text-center"><div class="relative w-56 h-56 flex items-center justify-center mb-12"><div class="absolute inset-0 bg-red-500 rounded-full sos-ring"></div><button class="pressable w-48 h-48 bg-white text-red-600 rounded-full flex items-center justify-center shadow-2xl relative z-10 border-8 border-red-500"><span class="font-extrabold text-5xl">SOS</span></button></div><p class="text-red-100 font-medium text-lg px-4 mb-10">Press and hold to instantly alert the Manager, Security, and your Guardian.</p><button class="pressable w-full py-4 bg-red-800 text-white rounded-2xl font-bold text-lg border border-red-500 flex justify-center items-center gap-2"><i data-lucide="phone" class="w-5 h-5"></i> Call 112 (Police)</button></div></div>
 
   </div>
 
@@ -658,11 +461,7 @@
       overlay.classList.remove('active');
       activeSheet.classList.remove('active');
       activeSheet = null;
-      
-      // Reset views when closing issues sheet
-      if (document.getElementById('issues-list-view')) {
-        toggleIssueView('list');
-      }
+      if (document.getElementById('issues-list-view')) { toggleIssueView('list'); }
     }
 
     function toggleIssueView(view) {
@@ -673,20 +472,18 @@
       if (view === 'form') {
         listView.classList.replace('show-view', 'hide-view');
         formView.classList.replace('hide-view', 'show-view');
-        title.innerHTML = '<i data-lucide="plus-circle" class="w-6 h-6"></i> Raise Issue';
+        title.innerHTML = 'Raise Issue';
       } else {
         formView.classList.replace('show-view', 'hide-view');
         listView.classList.replace('hide-view', 'show-view');
-        title.innerHTML = '<i data-lucide="ticket" class="w-6 h-6"></i> Issues';
+        title.innerHTML = 'Issues';
       }
-      lucide.createIcons();
     }
 
     function collectParcel() {
       const btn = document.getElementById('parcel-collect-btn');
       btn.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> Collected!';
       btn.classList.replace('bg-indigo-600', 'bg-green-500');
-      btn.classList.replace('shadow-indigo-200', 'shadow-green-200');
       lucide.createIcons();
     }
   </script>

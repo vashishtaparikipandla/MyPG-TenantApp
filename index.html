@@ -8,18 +8,12 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     
-    :root {
-      --primary: #4F46E5;
-      --bg: #F3F4F6;
-    }
-
+    :root { --primary: #4F46E5; --bg: #F3F4F6; }
     body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     ::-webkit-scrollbar { display: none; }
     
     .device-frame {
-      width: 390px; height: 844px;
-      background: var(--bg);
-      border-radius: 50px;
+      width: 390px; height: 844px; background: var(--bg); border-radius: 50px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 12px #0f172a;
       overflow: hidden; position: relative;
     }
@@ -29,11 +23,8 @@
     }
 
     .screen {
-      position: absolute; inset: 0; background: var(--bg);
-      display: flex; flex-direction: column;
-      transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 10;
+      position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;
     }
     .screen.active { transform: translateX(0); z-index: 20; }
     .screen.exit-left { transform: translateX(-30%); z-index: 10; opacity: 0.8; }
@@ -41,18 +32,10 @@
     .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.4); }
     .glass-card { background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 100%); box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.8); }
 
-    .gradient-rent {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: white; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4); position: relative; overflow: hidden;
-    }
-    .gradient-rent::after {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); transform: rotate(30deg); pointer-events: none;
-    }
+    .gradient-rent { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4); position: relative; overflow: hidden; }
+    .gradient-rent::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); transform: rotate(30deg); pointer-events: none; }
 
-    .sheet-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-    }
+    .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
     .sheet-overlay.active { opacity: 1; pointer-events: auto; }
     
     .sheet {
@@ -67,9 +50,13 @@
     .pressable:active { transform: scale(0.96); transition: transform 0.1s; }
     .sos-ring { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
     @keyframes ping { 75%, 100% { transform: scale(1.8); opacity: 0; } }
-    .scroll-area { overflow-y: auto; flex: 1; padding-bottom: 100px; }
+    .scroll-area { overflow-y: auto; flex: 1; padding-bottom: 120px; }
     
     .lucide { stroke-width: 2.25; }
+    
+    /* Tab hiding */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
   </style>
 </head>
 <body class="bg-gray-200 p-8 flex justify-center items-center min-h-screen">
@@ -77,7 +64,7 @@
   <div class="device-frame">
     <div class="notch"></div>
 
-    <!-- SCREENS -->
+    <!-- 1. LOGIN SCREEN -->
     <div id="screen-login" class="screen active">
       <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
         <div>
@@ -86,7 +73,6 @@
           </div>
           <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Welcome to MyPG</h1>
           <p class="text-lg text-gray-500 font-medium">Your modern living experience starts here.</p>
-          
           <div class="mt-12 space-y-3">
             <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Mobile Number</label>
             <div class="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 transition-all">
@@ -99,6 +85,7 @@
       </div>
     </div>
 
+    <!-- 2. OTP SCREEN -->
     <div id="screen-otp" class="screen">
       <div class="flex flex-col h-full p-8 pt-20 bg-white justify-between">
         <div>
@@ -106,21 +93,66 @@
             <i data-lucide="chevron-left" class="w-6 h-6"></i>
           </button>
           <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Verify it's you</h2>
-          <p class="text-gray-500 font-medium mb-10">We've sent a 6-digit code to <b class="text-gray-900">+91 9999999999</b></p>
-          <input id="login-otp" type="tel" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-3xl font-bold text-center tracking-[0.4em] text-gray-900 focus:border-indigo-500 transition-all" value="999999">
+          <p class="text-gray-500 font-medium mb-4">We've sent a 6-digit code to <b class="text-gray-900">+91 9999999999</b></p>
+          <div class="p-3 bg-blue-50 text-blue-700 rounded-xl text-xs font-bold mb-6 border border-blue-100">
+            Hint: Use 999999 (Active), 123456 (Invited), or 000000 (Prospect)
+          </div>
+          <input id="login-otp" type="tel" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-3xl font-bold text-center tracking-[0.4em] text-gray-900 focus:border-indigo-500 transition-all" value="999999" maxlength="6">
         </div>
         <button onclick="login()" class="pressable w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl">Verify & Login</button>
       </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- 3. PROSPECT SCREEN (Enter PG Code) -->
+    <div id="screen-prospect" class="screen">
+      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
+        <div>
+          <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Join a PG</h1>
+          <p class="text-lg text-gray-500 font-medium">Enter the 6-digit code provided by your PG manager.</p>
+          <div class="mt-12 space-y-3">
+            <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">PG Invite Code</label>
+            <input type="text" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-2xl font-bold text-center tracking-widest text-gray-900 uppercase" placeholder="A B C 1 2 3">
+          </div>
+        </div>
+        <button onclick="navTo('screen-activation')" class="pressable w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl">Find PG</button>
+      </div>
+    </div>
+
+    <!-- 4. ACTIVATION WIZARD (Sign Agreement) -->
+    <div id="screen-activation" class="screen">
+      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
+        <div>
+          <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 text-green-600">
+            <i data-lucide="file-check-2" class="w-8 h-8"></i>
+          </div>
+          <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Sunrise PG</h1>
+          <p class="text-gray-500 font-medium mb-8">Room 204B, Tower A</p>
+          
+          <div class="bg-gray-50 border border-gray-200 p-5 rounded-2xl mb-6">
+            <h3 class="font-bold text-gray-900 mb-2">Rental Agreement</h3>
+            <p class="text-sm text-gray-500 mb-4">Please review and digitally sign your rental agreement to complete onboarding.</p>
+            <button class="w-full py-3 bg-white border border-gray-300 rounded-xl font-bold text-sm text-gray-700 flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Read Document</button>
+          </div>
+          
+          <label class="flex items-start gap-3">
+            <input type="checkbox" class="mt-1 w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            <span class="text-sm font-medium text-gray-600">I agree to the terms and conditions set forth in the rental agreement and house rules.</span>
+          </label>
+        </div>
+        <button onclick="navTo('screen-main')" class="pressable w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl">Accept & Activate</button>
+      </div>
+    </div>
+
+    <!-- 5. MAIN DASHBOARD (With Tabs) -->
     <div id="screen-main" class="screen bg-[#F8FAFC]">
+      
+      <!-- Sticky Header -->
       <div class="glass fixed top-0 w-full pt-14 pb-4 px-6 z-30 flex justify-between items-center">
         <div class="flex items-center gap-3">
           <img src="https://i.pravatar.cc/150?img=11" class="w-11 h-11 rounded-full border-2 border-white shadow-sm object-cover" />
           <div>
-            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Good Morning,</p>
-            <h2 class="text-lg font-extrabold text-gray-900 leading-tight">Rohit Verma</h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Good Morning,</p>
+            <h2 class="text-base font-extrabold text-gray-900 leading-tight">Rohit Verma</h2>
           </div>
         </div>
         <div class="flex gap-2 text-gray-700">
@@ -134,7 +166,8 @@
         </div>
       </div>
 
-      <div id="tab-home" class="scroll-area pt-32 px-6">
+      <!-- TAB 1: HOME -->
+      <div id="tab-home" class="scroll-area pt-32 px-6 tab-content active">
         <div class="gradient-rent rounded-3xl p-6 mb-8">
           <div class="flex justify-between items-start mb-4">
             <div>
@@ -167,6 +200,10 @@
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="shirt" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">Laundry</span>
           </button>
+          <button onclick="openSheet('sheet-parcels')" class="pressable flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="package" class="w-6 h-6"></i></div>
+            <span class="text-[11px] font-bold text-gray-600">Parcels</span>
+          </button>
           <button onclick="openSheet('sheet-leave')" class="pressable flex flex-col items-center gap-2">
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="plane" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">Leave</span>
@@ -175,13 +212,9 @@
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="bed" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">Room</span>
           </button>
-          <button class="pressable flex flex-col items-center gap-2">
+          <button onclick="openSheet('sheet-wifi')" class="pressable flex flex-col items-center gap-2">
             <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="wifi" class="w-6 h-6"></i></div>
             <span class="text-[11px] font-bold text-gray-600">WiFi</span>
-          </button>
-          <button onclick="openSheet('sheet-moveout')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-red-50 rounded-2xl shadow-sm border border-red-100 flex items-center justify-center text-red-600"><i data-lucide="log-out" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-red-600">Exit PG</span>
           </button>
         </div>
 
@@ -200,14 +233,98 @@
         </div>
       </div>
 
+      <!-- TAB 2: PAYMENTS (Ledger) -->
+      <div id="tab-payments" class="scroll-area pt-28 px-6 tab-content">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Payments</h2>
+        
+        <div class="bg-red-50 border border-red-100 rounded-3xl p-6 mb-8 shadow-sm">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <p class="text-red-800 text-sm font-semibold mb-1">Overdue Amount</p>
+              <h3 class="text-4xl font-extrabold text-red-600">₹2,500</h3>
+            </div>
+          </div>
+          <p class="text-red-700 text-sm font-medium mb-4">Pending electricity bill from last month.</p>
+          <button class="pressable w-full py-3.5 bg-red-600 text-white rounded-xl font-bold shadow-lg text-sm">Pay Now</button>
+        </div>
+
+        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">History</h4>
+        <div class="flex flex-col gap-3">
+          <!-- Item 1 -->
+          <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-100">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></div>
+              <div>
+                <p class="font-bold text-gray-900">Sep Rent</p>
+                <p class="text-xs font-medium text-gray-500 mt-0.5">Paid on 4 Sep</p>
+              </div>
+            </div>
+            <div class="text-right flex items-center gap-3">
+              <span class="font-bold text-gray-900">₹8,500</span>
+              <button class="text-indigo-600"><i data-lucide="download" class="w-5 h-5"></i></button>
+            </div>
+          </div>
+          <!-- Item 2 -->
+          <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-100">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></div>
+              <div>
+                <p class="font-bold text-gray-900">Security Deposit</p>
+                <p class="text-xs font-medium text-gray-500 mt-0.5">Paid on 1 Aug</p>
+              </div>
+            </div>
+            <div class="text-right flex items-center gap-3">
+              <span class="font-bold text-gray-900">₹15,000</span>
+              <button class="text-indigo-600"><i data-lucide="download" class="w-5 h-5"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: PROFILE -->
+      <div id="tab-profile" class="scroll-area pt-28 px-6 tab-content">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Profile</h2>
+        
+        <div class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm flex items-center gap-5 mb-8">
+          <img src="https://i.pravatar.cc/150?img=11" class="w-16 h-16 rounded-full object-cover" />
+          <div>
+            <h3 class="text-xl font-extrabold text-gray-900">Rohit Verma</h3>
+            <p class="text-sm font-medium text-gray-500">+91 9999999999</p>
+            <span class="inline-block mt-2 px-2 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded-lg">Active Tenant</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+          <button class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="history" class="w-5 h-5 text-indigo-500"></i> My Stays</div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          </button>
+          <button class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="file-check" class="w-5 h-5 text-indigo-500"></i> Documents & KYC</div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          </button>
+          <button class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-gray-700 font-bold"><i data-lucide="gift" class="w-5 h-5 text-indigo-500"></i> Refer a Friend</div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          </button>
+          <button onclick="openSheet('sheet-moveout')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
+            <div class="flex items-center gap-3 text-red-600 font-bold"><i data-lucide="log-out" class="w-5 h-5 text-red-500"></i> Exit PG (Move Out)</div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+          </button>
+        </div>
+
+        <button onclick="navTo('screen-login')" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold pressable">Log Out</button>
+      </div>
+
+      <!-- Bottom Nav (Sticky) -->
       <div class="glass fixed bottom-0 w-full h-24 pb-6 flex justify-around items-center z-40 rounded-b-[40px]">
-        <button class="flex flex-col items-center gap-1.5 text-indigo-600 w-16">
+        <button id="nav-btn-home" onclick="switchTab('home')" class="nav-btn flex flex-col items-center gap-1.5 text-indigo-600 w-16 transition-colors">
           <i data-lucide="home" class="w-6 h-6"></i><span class="text-[10px] font-bold">Home</span>
         </button>
-        <button class="flex flex-col items-center gap-1.5 text-gray-400 hover:text-gray-900 transition w-16">
+        <button id="nav-btn-payments" onclick="switchTab('payments')" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 hover:text-indigo-600 transition-colors w-16">
           <i data-lucide="credit-card" class="w-6 h-6"></i><span class="text-[10px] font-bold">Payments</span>
         </button>
-        <button class="flex flex-col items-center gap-1.5 text-gray-400 hover:text-gray-900 transition w-16">
+        <button id="nav-btn-profile" onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 hover:text-indigo-600 transition-colors w-16">
           <i data-lucide="user" class="w-6 h-6"></i><span class="text-[10px] font-bold">Profile</span>
         </button>
       </div>
@@ -265,13 +382,23 @@
     </div>
     
     <!-- Minor Sheets -->
-    <div id="sheet-issues" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="ticket"></i> Issues</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">AC not cooling</h4><p class="text-gray-500 text-sm">In Progress</p></div></div></div>
-    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="sparkles"></i> Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold">Skip</button></div></div></div>
-    <div id="sheet-laundry" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="shirt"></i> Laundry</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Order #992</h4><p class="text-gray-500 text-sm">Processing</p></div></div></div>
-    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="plane"></i> Leave</h2><p class="text-gray-500 mb-4">Pause meals and cleaning while away.</p><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit</button></div></div>
-    <div id="sheet-room" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bed"></i> Room Change</h2><p class="text-gray-500 mb-4">Request a different bed or room type.</p><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Request Change</button></div></div>
-    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2 text-red-600"><i data-lucide="log-out"></i> Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4">Requires 30 days notice.</p><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold">Initiate Exit</button></div></div>
-    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bell"></i> Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1">Power Outage Tomorrow</h4></div></div></div>
+    <div id="sheet-issues" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="ticket"></i> Issues</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">AC not cooling</h4><p class="text-gray-500 text-sm">In Progress</p></div><button class="w-full py-4 bg-gray-900 text-white mt-6 rounded-xl font-bold">Raise New Issue</button></div></div>
+    
+    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="sparkles"></i> Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold text-gray-700">Skip Tomorrow</button></div></div></div>
+    
+    <div id="sheet-laundry" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="shirt"></i> Laundry</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Order #992</h4><p class="text-gray-500 text-sm">Processing (12 Items)</p></div></div></div>
+    
+    <div id="sheet-parcels" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="package"></i> Parcels</h2><div class="bg-green-50 p-5 rounded-2xl border border-green-200"><h4 class="font-bold text-lg text-green-800">1 Package at Reception</h4><p class="text-green-700 text-sm">Amazon delivery (Received 2h ago)</p></div></div></div>
+    
+    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="plane"></i> Leave</h2><p class="text-gray-500 mb-4 font-medium text-sm">Pause meals and cleaning while away.</p><label class="font-bold text-xs text-gray-500 uppercase">Start Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3 mt-1 font-bold"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit Request</button></div></div>
+    
+    <div id="sheet-room" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bed"></i> Room Change</h2><p class="text-gray-500 mb-4 font-medium text-sm">Request a different bed or room type within this property.</p><select class="w-full p-4 bg-gray-50 rounded-xl border mb-6 font-bold"><option>Single Room</option><option>Double Sharing</option></select><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Request Change</button></div></div>
+    
+    <div id="sheet-wifi" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="wifi"></i> WiFi Details</h2><div class="bg-white p-5 rounded-2xl border flex flex-col gap-3"><div class="flex justify-between"><span class="text-gray-500 font-bold">Network</span><span class="font-bold">Sunrise_5G</span></div><div class="flex justify-between items-center"><span class="text-gray-500 font-bold">Password</span><span class="font-bold tracking-widest text-xl">••••••••</span></div></div><button class="w-full py-4 bg-gray-900 text-white mt-6 rounded-xl font-bold flex items-center justify-center gap-2"><i data-lucide="copy" class="w-5 h-5"></i> Copy Password</button></div></div>
+
+    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2 text-red-600"><i data-lucide="log-out"></i> Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4">Requires 30 days notice to avoid penalty.</p><label class="font-bold text-xs text-gray-500 uppercase">Target Exit Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-6 mt-1 font-bold"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold shadow-lg shadow-red-200">Initiate Exit Process</button></div></div>
+    
+    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 flex items-center gap-2"><i data-lucide="bell"></i> Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1">Power Outage Tomorrow</h4><p class="text-sm text-gray-600 mt-1">Maintenance from 2 PM to 5 PM.</p></div></div></div>
 
   </div>
 
@@ -302,11 +429,37 @@
 
     function login() {
       const btn = document.querySelector('#screen-otp button');
+      const otp = document.getElementById('login-otp').value;
       btn.innerHTML = 'Verifying...';
+      
       setTimeout(() => {
-        navTo('screen-main');
         btn.innerHTML = 'Verify & Login';
+        if (otp === '000000') {
+          navTo('screen-prospect');
+        } else if (otp === '123456') {
+          navTo('screen-activation');
+        } else {
+          navTo('screen-main');
+          switchTab('home'); // Ensure we land on home
+        }
       }, 600);
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      // Reset all nav button colors
+      document.querySelectorAll('.nav-btn').forEach(el => {
+        el.classList.remove('text-indigo-600');
+        el.classList.add('text-gray-400');
+      });
+      
+      // Show selected tab
+      document.getElementById('tab-' + tabName).classList.add('active');
+      // Highlight selected nav button
+      const activeBtn = document.getElementById('nav-btn-' + tabName);
+      activeBtn.classList.remove('text-gray-400');
+      activeBtn.classList.add('text-indigo-600');
     }
 
     function openSheet(sheetId) {

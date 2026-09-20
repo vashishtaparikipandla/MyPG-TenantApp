@@ -1,21 +1,12 @@
 'use client';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { VStack, HStack } from '@astryxdesign/core/Layout';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Button } from '@astryxdesign/core/Button';
-import { Icon } from '@astryxdesign/core/Icon';
-import { Card } from '@astryxdesign/core/Card';
 
 export default function JoinPG() {
   const router = useRouter();
-  const [step, setStep] = useState(1); // 1 = Enter Code, 2 = Preview, 3 = Request Form
+  const [step, setStep] = useState(1);
   const [code, setCode] = useState('');
   
-  // Dummy PG data
   const pgData = {
     name: 'Sunrise PG',
     area: 'Koramangala, Bangalore',
@@ -25,93 +16,76 @@ export default function JoinPG() {
     availability: 'Waitlist only'
   };
 
-  const handleVerifyCode = () => {
-    if (code.length === 6) {
-      setStep(2);
-    }
-  };
-
-  const handleRequestJoin = () => {
-    setStep(3);
-  };
-
+  const handleVerifyCode = () => { if (code.length === 6) setStep(2); };
+  const handleRequestJoin = () => setStep(3);
   const handleSubmitRequest = () => {
     alert("Request Sent! The owner will review it.");
-    router.push('/home'); // In a real app, this would route to a request tracker
+    router.push('/home');
   };
 
   return (
-    <VStack gap={6} xstyle={{ padding: 24, minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+    <div className="min-h-screen p-6 bg-gray-50">
       {step === 1 && (
-        <VStack gap={6}>
-          <HStack gap={2} xstyle={{ alignItems: 'center' }}>
-            <Icon name="arrow_back" size={24} onClick={() => router.back()} xstyle={{ cursor: 'pointer' }} />
-            <Heading level={2}>Join a PG</Heading>
-          </HStack>
-          
-          <Text color="secondary">Enter the 6-character code provided by the PG owner.</Text>
-          
-          <TextInput
-            label="PG Code"
-            value={code}
-            onChange={(e: any) => setCode(e.target.value.toUpperCase())}
-            placeholder="e.g. SUN123"
-            maxLength={6}
-          />
-          
-          <Button 
-            label="Find PG" 
-            variant="primary" 
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-2">
+            <button className="text-blue-600 font-bold" onClick={() => router.back()}>← Back</button>
+            <h2 className="text-2xl font-bold ml-2">Join a PG</h2>
+          </div>
+          <p className="text-gray-500">Enter the 6-character code provided by the PG owner.</p>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">PG Code</label>
+            <input
+              className="w-full p-4 border border-gray-300 rounded-lg"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder="e.g. SUN123"
+              maxLength={6}
+            />
+          </div>
+          <button 
+            className="w-full py-4 bg-blue-600 text-white rounded-lg font-medium disabled:opacity-50"
             onClick={handleVerifyCode} 
             disabled={code.length < 6} 
-          />
-        </VStack>
+          >Find PG</button>
+        </div>
       )}
 
       {step === 2 && (
-        <VStack gap={6}>
-          <HStack gap={2} xstyle={{ alignItems: 'center' }}>
-            <Icon name="arrow_back" size={24} onClick={() => setStep(1)} xstyle={{ cursor: 'pointer' }} />
-            <Heading level={2}>PG Preview</Heading>
-          </HStack>
-          
-          <Card xstyle={{ padding: 20 }}>
-            <VStack gap={4}>
-              <Heading level={3}>{pgData.name}</Heading>
-              <Text color="secondary">{pgData.area} • {pgData.category}</Text>
-              
-              <VStack gap={2}>
-                <HStack gap={2}><Icon name="group" size={20} color="secondary" /><Text>{pgData.gender}</Text></HStack>
-                <HStack gap={2}><Icon name="wifi" size={20} color="secondary" /><Text>{pgData.amenities}</Text></HStack>
-                <HStack gap={2}><Icon name="info" size={20} color="secondary" /><Text color="secondary">{pgData.availability}</Text></HStack>
-              </VStack>
-            </VStack>
-          </Card>
-          
-          <Button label="Request to Join" variant="primary" onClick={handleRequestJoin} />
-        </VStack>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-2">
+            <button className="text-blue-600 font-bold" onClick={() => setStep(1)}>← Back</button>
+            <h2 className="text-2xl font-bold ml-2">PG Preview</h2>
+          </div>
+          <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
+            <h3 className="text-xl font-bold">{pgData.name}</h3>
+            <p className="text-gray-500">{pgData.area} • {pgData.category}</p>
+            <div className="flex flex-col gap-2 mt-2">
+              <p className="text-gray-700"><b>Gender:</b> {pgData.gender}</p>
+              <p className="text-gray-700"><b>Amenities:</b> {pgData.amenities}</p>
+              <p className="text-gray-700"><b>Availability:</b> {pgData.availability}</p>
+            </div>
+          </div>
+          <button className="w-full py-4 bg-blue-600 text-white rounded-lg font-medium" onClick={handleRequestJoin}>Request to Join</button>
+        </div>
       )}
 
       {step === 3 && (
-        <VStack gap={6}>
-          <HStack gap={2} xstyle={{ alignItems: 'center' }}>
-            <Icon name="arrow_back" size={24} onClick={() => setStep(2)} xstyle={{ cursor: 'pointer' }} />
-            <Heading level={2}>Request Form</Heading>
-          </HStack>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-2">
+            <button className="text-blue-600 font-bold" onClick={() => setStep(2)}>← Back</button>
+            <h2 className="text-2xl font-bold ml-2">Request Form</h2>
+          </div>
+          <p className="text-gray-500">Submit your details to the owner of {pgData.name}.</p>
+          <input className="w-full p-4 border border-gray-300 rounded-lg" placeholder="Preferred Room Type (e.g. Double)" />
+          <input className="w-full p-4 border border-gray-300 rounded-lg" type="date" placeholder="Expected Move-in Date" />
+          <input className="w-full p-4 border border-gray-300 rounded-lg" placeholder="Note to Owner (Optional)" />
           
-          <Text color="secondary">Submit your details to the owner of {pgData.name}.</Text>
-          
-          <TextInput label="Preferred Room Type" placeholder="e.g. Double Sharing" />
-          <TextInput label="Expected Move-in Date" type="date" />
-          <TextInput label="Note to Owner (Optional)" placeholder="Any special requests?" />
-          
-          <Card xstyle={{ padding: 16, backgroundColor: '#eff6ff' }}>
-            <Text type="supporting" color="secondary">By requesting, your name and phone number will be shared with the PG owner.</Text>
-          </Card>
-          
-          <Button label="Submit Request" variant="primary" onClick={handleSubmitRequest} />
-        </VStack>
+          <div className="p-3 bg-blue-50 rounded-lg mt-2">
+            <p className="text-sm text-blue-800">By requesting, your name and phone number will be shared with the PG owner.</p>
+          </div>
+          <button className="w-full py-4 bg-blue-600 text-white rounded-lg font-medium" onClick={handleSubmitRequest}>Submit Request</button>
+        </div>
       )}
-    </VStack>
+    </div>
   );
 }

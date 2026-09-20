@@ -1,15 +1,6 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { VStack, HStack } from '@astryxdesign/core/Layout';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Button } from '@astryxdesign/core/Button';
-import { Link } from '@astryxdesign/core/Link';
-import { Icon } from '@astryxdesign/core/Icon';
-import { Card } from '@astryxdesign/core/Card';
 
 export default function Login() {
   const router = useRouter();
@@ -21,17 +12,10 @@ export default function Login() {
   useEffect(() => {
     let interval: any;
     if (step === 2 && timer > 0) {
-      interval = setInterval(() => setTimer(t => t - 1), 1000);
+      interval = setInterval(() => setTimer((t) => t - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [step, timer]);
-
-  const handleSendOtp = () => {
-    if (phone.length >= 10) {
-      setStep(2);
-      setTimer(30);
-    }
-  };
 
   const handleVerify = () => {
     if (otp === '999999') {
@@ -42,76 +26,59 @@ export default function Login() {
   };
 
   return (
-    <VStack gap={6} xstyle={{ padding: 24, minHeight: '100vh', justifyContent: 'center' }}>
+    <div className="min-h-screen p-6 bg-gray-50">
       {step === 1 ? (
-        <VStack gap={6}>
-          <VStack gap={2}>
-            <Heading level={2}>Enter your phone number</Heading>
-            <Text color="secondary">We'll send you an OTP to verify.</Text>
-          </VStack>
-
-          <TextInput
-            label="Phone Number"
+        <div className="flex flex-col gap-6 mt-12">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-3xl font-bold">Welcome to MyPG</h2>
+            <p className="text-gray-500">Enter your phone number to login</p>
+          </div>
+          <input
             type="tel"
+            className="w-full p-4 border border-gray-300 rounded-lg text-lg"
+            placeholder="10-digit mobile number"
             value={phone}
-            onChange={(e: any) => setPhone(e.target.value)}
-            placeholder="Enter 10-digit number"
+            onChange={(e) => setPhone(e.target.value)}
             maxLength={10}
           />
-
-          <Button 
-            label="Send OTP" 
-            variant="primary" 
-            onClick={handleSendOtp} 
-            disabled={phone.length < 10} 
-          />
-
-          <HStack xstyle={{ justifyContent: 'center', marginTop: 16 }}>
-            <Text color="secondary">Not a tenant? </Text>
-            <Link href="/" xstyle={{ marginLeft: 4 }}>Change role</Link>
-          </HStack>
-        </VStack>
+          <button 
+            className="w-full py-4 bg-blue-600 text-white rounded-lg font-medium text-lg disabled:opacity-50"
+            onClick={() => setStep(2)}
+            disabled={phone.length < 10}
+          >
+            Get OTP
+          </button>
+        </div>
       ) : (
-        <VStack gap={6}>
-          <VStack gap={2}>
-            <HStack gap={2} xstyle={{ alignItems: 'center' }}>
-              <Icon name="arrow_back" size={24} onClick={() => setStep(1)} xstyle={{ cursor: 'pointer' }} />
-              <Heading level={2}>Enter OTP</Heading>
-            </HStack>
-            <Text color="secondary">Sent to +91 {phone}</Text>
-          </VStack>
-
-          <TextInput
-            label="6-digit OTP"
+        <div className="flex flex-col gap-6 mt-12">
+          <div className="flex flex-col gap-2">
+            <button className="text-left text-blue-600 font-medium mb-4" onClick={() => setStep(1)}>← Back</button>
+            <h2 className="text-3xl font-bold">Enter OTP</h2>
+            <p className="text-gray-500">Sent to +91 {phone}</p>
+          </div>
+          <input
             type="number"
+            className="w-full p-4 border border-gray-300 rounded-lg text-lg tracking-widest text-center"
+            placeholder="• • • • • •"
             value={otp}
-            onChange={(e: any) => setOtp(e.target.value)}
-            placeholder="Enter OTP"
+            onChange={(e) => setOtp(e.target.value)}
             maxLength={6}
           />
-
-          <Button 
-            label="Verify & Login" 
-            variant="primary" 
-            onClick={handleVerify} 
-            disabled={otp.length < 6} 
-          />
-
-          <Card xstyle={{ padding: 12, backgroundColor: '#eff6ff', marginTop: 12 }}>
-            <Text type="supporting" color="secondary">
+          <button 
+            className="w-full py-4 bg-blue-600 text-white rounded-lg font-medium text-lg disabled:opacity-50"
+            onClick={handleVerify}
+            disabled={otp.length < 6}
+          >
+            Verify & Login
+          </button>
+          
+          <div className="p-3 bg-blue-50 rounded-lg mt-2">
+            <p className="text-sm text-blue-800">
               Testing tips: Enter OTP <b>999999</b> to log in as an Active Tenant (Dashboard). Enter any other 6 digits to log in as a Prospect (Home).
-            </Text>
-          </Card>
-
-          <HStack xstyle={{ justifyContent: 'center', marginTop: 16 }}>
-            {timer > 0 ? (
-              <Text color="secondary">Resend OTP in {timer}s</Text>
-            ) : (
-              <Link onClick={() => setTimer(30)}>Resend OTP</Link>
-            )}
-          </HStack>
-        </VStack>
+            </p>
+          </div>
+        </div>
       )}
-    </VStack>
+    </div>
   );
 }

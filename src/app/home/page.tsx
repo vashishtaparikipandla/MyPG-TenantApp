@@ -1,55 +1,32 @@
 'use client';
 
-import { VStack, HStack } from '@astryxdesign/core/Layout';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
-import { Card } from '@astryxdesign/core/Card';
-import { Button } from '@astryxdesign/core/Button';
-import { Icon } from '@astryxdesign/core/Icon';
-
-export default function ProspectHome() {
+export default function Home() {
   return (
-    <VStack gap={6} xstyle={{ padding: 24, minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <VStack gap={1}>
-        <Heading level={2}>Home</Heading>
-        <Text color="secondary">Welcome to PG Wonders</Text>
-      </VStack>
+    <div className="min-h-screen p-6 bg-gray-50 flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-2xl font-bold">Hi there,</h2>
+        <p className="text-gray-500">Welcome to MyPG</p>
+      </div>
 
-      <Card>
-        <VStack gap={4} xstyle={{ padding: 20 }}>
-          <HStack gap={4} xstyle={{ alignItems: 'center' }}>
-            <Icon name="search" size={24} />
-            <VStack gap={1}>
-              <Heading level={4}>Join a PG</Heading>
-              <Text type="supporting" color="secondary">Have a code from your owner?</Text>
-            </VStack>
-          </HStack>
-          <Button label="Enter PG Code" variant="primary" onClick={() => window.location.href = '/join'} />
-          <Button label="Scan QR" variant="secondary" />
-        </VStack>
-      </Card>
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h4 className="text-lg font-bold">Join a PG</h4>
+          <p className="text-sm text-gray-500">Have a code from your owner?</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <button className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium" onClick={() => window.location.href = '/join'}>Enter PG Code</button>
+          <button className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-medium">Scan QR</button>
+        </div>
+      </div>
 
-      <Card>
-        <VStack gap={4} xstyle={{ padding: 20 }}>
-          <Heading level={4}>My Requests</Heading>
-          <VStack gap={2} xstyle={{ alignItems: 'center', padding: 20 }}>
-            <Icon name="assignment" size={32} />
-            <Text color="secondary" xstyle={{ textAlign: 'center' }}>
-              You don't have any pending requests. Ask your PG owner for their PG Wonders code.
-            </Text>
-          </VStack>
-        </VStack>
-      </Card>
-
-      <Card>
-        <VStack gap={4} xstyle={{ padding: 20, opacity: 0.7 }}>
-          <HStack xstyle={{ justifyContent: 'space-between', alignItems: 'center' }}>
-            <Heading level={4}>Explore PGs near you</Heading>
-            <Text type="supporting" color="secondary">Coming soon</Text>
-          </HStack>
-          <Text color="secondary">Find verified PGs in your area. This feature is rolling out soon.</Text>
-        </VStack>
-      </Card>
-    </VStack>
+      <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h4 className="text-lg font-bold">My Requests</h4>
+        </div>
+        <div className="p-4 bg-gray-50 rounded-lg flex justify-center border border-dashed border-gray-300">
+          <p className="text-sm text-gray-500">No active join requests.</p>
+        </div>
+      </div>
+    </div>
   );
 }

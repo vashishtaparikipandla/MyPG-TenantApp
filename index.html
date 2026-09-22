@@ -259,23 +259,33 @@
           </div>
           <div><label class="label">Email (Optional)</label><input type="email" class="field" placeholder="rohit@example.com"></div>
         </div>
-        <!-- Step 3: Guardian -->
+        <!-- Step 3: Guardian (conditional — shown for Students and under-18 only) -->
         <div id="reg-s3" class="reg-step space-y-4 pt-2 hidden">
-          <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl">
-            <p class="text-sm font-bold text-amber-800">Your guardian will receive important updates about your stay via WhatsApp — payments, notices and safety alerts.</p>
+          <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl">
+            <div class="flex items-start gap-3">
+              <i data-lucide="info" class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5"></i>
+              <div>
+                <p class="text-sm font-black text-indigo-900 mb-1">Why are we asking this?</p>
+                <p class="text-sm font-medium text-indigo-800">Since you're a student or under 18, we need a parent or guardian's WhatsApp number. They'll receive automatic updates — rent confirmations, payment reminders, and safety notices. <strong>This can't be turned off.</strong></p>
+              </div>
+            </div>
           </div>
-          <div><label class="label">Guardian Name</label><input class="field" placeholder="e.g. Suresh Verma"></div>
-          <div><label class="label">Relationship</label><select class="field"><option>Father</option><option>Mother</option><option>Sibling</option><option>Spouse</option><option>Other</option></select></div>
-          <div><label class="label">WhatsApp Number (+91)</label><input type="tel" class="field" placeholder="9888888888"></div>
+          <div><label class="label">Guardian's Name</label><input class="field" placeholder="e.g. Suresh Verma" value="Suresh Verma"></div>
           <div>
-            <label class="label">Alert Scope</label>
-            <div class="space-y-2">
-              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4" checked><span class="font-semibold text-sm">Payments & Rent</span></label>
-              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4" checked><span class="font-semibold text-sm">Leaves (7+ days)</span></label>
-              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4"><span class="font-semibold text-sm">Safety & SOS</span></label>
+            <label class="label">Relationship</label>
+            <select class="field"><option>Father</option><option>Mother</option><option>Sibling</option><option>Spouse</option><option>Other relative</option></select>
+          </div>
+          <div><label class="label">WhatsApp Number (+91)</label><input type="tel" class="field" placeholder="e.g. 9888888888"></div>
+          <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">What they'll receive</p>
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2 text-sm text-gray-700"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 shrink-0"></i>Rent payment reminders & receipts</div>
+              <div class="flex items-center gap-2 text-sm text-gray-700"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 shrink-0"></i>Long-leave notifications (7+ days)</div>
+              <div class="flex items-center gap-2 text-sm text-gray-700"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 shrink-0"></i>Safety and SOS alerts</div>
             </div>
           </div>
         </div>
+
         <!-- Step 4: Emergency Contact -->
         <div id="reg-s4" class="reg-step space-y-4 pt-2 hidden">
           <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl"><p class="text-sm font-bold text-blue-800">This person can be called in a medical or safety emergency at your PG.</p></div>
@@ -461,7 +471,142 @@
           <label class="flex items-start gap-3"><input type="checkbox" class="mt-1 w-5 h-5"><span class="text-sm font-medium text-gray-700">I have read and agree to the rental agreement and house rules.</span></label>
         </div>
       </div>
-      <div class="px-6 pb-8 border-t border-gray-100 pt-4"><button onclick="navTo('s-main')" class="pressable btn-primary">Sign & Activate</button></div>
+      <div class="px-6 pb-8 border-t border-gray-100 pt-4"><button onclick="navTo('s-onboarding')" class="pressable btn-primary">Sign &amp; Activate</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 7b: ONBOARDING CAROUSEL
+  ══════════════════════════════════════ -->
+  <div id="s-onboarding" class="screen" style="background: #0f172a;">
+    <div class="flex flex-col h-full">
+
+      <!-- Slide container -->
+      <div class="flex-1 relative overflow-hidden">
+
+        <!-- Slide 1: Welcome -->
+        <div class="ob-slide absolute inset-0 flex flex-col justify-end px-8 pb-10 active-slide" id="ob-1">
+          <div class="absolute inset-0 flex items-center justify-center opacity-10">
+            <i data-lucide="building-2" style="width:240px; height:240px; color:white;"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="w-16 h-16 bg-indigo-500 rounded-3xl flex items-center justify-center mb-6 shadow-xl">
+              <i data-lucide="party-popper" class="w-8 h-8 text-white"></i>
+            </div>
+            <h2 class="text-4xl font-black text-white mb-3 leading-tight">Welcome to<br>Sunrise PG!</h2>
+            <p class="text-slate-300 font-medium text-base leading-relaxed">We're glad to have you here, Rohit. Your room (204B, Tower A) is ready. This is going to be home for a while — let's get you set up right.</p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Rules -->
+        <div class="ob-slide absolute inset-0 flex flex-col justify-end px-8 pb-10" id="ob-2" style="display:none;">
+          <div class="absolute inset-0 flex items-center justify-center opacity-10">
+            <i data-lucide="shield-check" style="width:240px; height:240px; color:white;"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="w-16 h-16 bg-amber-500 rounded-3xl flex items-center justify-center mb-6 shadow-xl">
+              <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+            </div>
+            <h2 class="text-3xl font-black text-white mb-4 leading-tight">A few things<br>to keep in mind</h2>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3 bg-white/10 rounded-2xl p-3">
+                <i data-lucide="clock" class="w-4 h-4 text-amber-300 shrink-0 mt-0.5"></i>
+                <p class="text-slate-200 text-sm font-medium"><strong class="text-white">Curfew at 11:30 PM.</strong> Main gate locks at night. Plan your evenings accordingly.</p>
+              </div>
+              <div class="flex items-start gap-3 bg-white/10 rounded-2xl p-3">
+                <i data-lucide="ban" class="w-4 h-4 text-red-400 shrink-0 mt-0.5"></i>
+                <p class="text-slate-200 text-sm font-medium"><strong class="text-white">No smoking or alcohol</strong> anywhere on the premises.</p>
+              </div>
+              <div class="flex items-start gap-3 bg-white/10 rounded-2xl p-3">
+                <i data-lucide="users" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                <p class="text-slate-200 text-sm font-medium"><strong class="text-white">Guests in the lobby only.</strong> No visitors in rooms.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Room Setup -->
+        <div class="ob-slide absolute inset-0 flex flex-col justify-end px-8 pb-10" id="ob-3" style="display:none;">
+          <div class="absolute inset-0 flex items-center justify-center opacity-10">
+            <i data-lucide="bed-double" style="width:240px; height:240px; color:white;"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="w-16 h-16 bg-green-500 rounded-3xl flex items-center justify-center mb-6 shadow-xl">
+              <i data-lucide="bed-double" class="w-8 h-8 text-white"></i>
+            </div>
+            <h2 class="text-3xl font-black text-white mb-4 leading-tight">Getting settled<br>in Room 204B</h2>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between bg-white/10 rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="key" class="w-5 h-5 text-yellow-300"></i>
+                  <div><p class="text-white font-bold text-sm">Collect Your Key</p><p class="text-slate-400 text-xs">From the reception desk, Ground Floor</p></div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+              </div>
+              <div class="flex items-center justify-between bg-white/10 rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="wifi" class="w-5 h-5 text-blue-300"></i>
+                  <div><p class="text-white font-bold text-sm">Connect to WiFi</p><p class="text-slate-400 text-xs font-mono">Sunrise_5G · Ask warden for password</p></div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+              </div>
+              <div class="flex items-center justify-between bg-white/10 rounded-2xl p-4">
+                <div class="flex items-center gap-3">
+                  <i data-lucide="utensils" class="w-5 h-5 text-orange-300"></i>
+                  <div><p class="text-white font-bold text-sm">First Meal: Lunch Today</p><p class="text-slate-400 text-xs">Mess Hall, 2nd Floor · 12:30–2:30 PM</p></div>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Roommate + Hygiene -->
+        <div class="ob-slide absolute inset-0 flex flex-col justify-end px-8 pb-10" id="ob-4" style="display:none;">
+          <div class="absolute inset-0 flex items-center justify-center opacity-10">
+            <i data-lucide="heart-handshake" style="width:240px; height:240px; color:white;"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="w-16 h-16 bg-purple-500 rounded-3xl flex items-center justify-center mb-6 shadow-xl">
+              <i data-lucide="heart-handshake" class="w-8 h-8 text-white"></i>
+            </div>
+            <h2 class="text-3xl font-black text-white mb-2 leading-tight">Meet Karthik,<br>your roommate</h2>
+            <p class="text-slate-400 text-sm font-medium mb-4">You're sharing 204B with Karthik. Here's how to keep things comfortable for both of you.</p>
+            <div class="space-y-2 mb-6">
+              <label class="flex items-start gap-3 bg-white/10 rounded-xl p-3 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 shrink-0">
+                <p class="text-slate-200 text-sm font-medium">I'll keep the room clean and tidy at all times.</p>
+              </label>
+              <label class="flex items-start gap-3 bg-white/10 rounded-xl p-3 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 shrink-0">
+                <p class="text-slate-200 text-sm font-medium">No loud music or calls after 10 PM.</p>
+              </label>
+              <label class="flex items-start gap-3 bg-white/10 rounded-xl p-3 cursor-pointer">
+                <input type="checkbox" class="mt-0.5 w-4 h-4 shrink-0">
+                <p class="text-slate-200 text-sm font-medium">I'll respect my roommate's privacy and belongings.</p>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom: dots + button -->
+      <div class="px-8 pb-10 pt-4">
+        <div class="flex items-center justify-between">
+          <!-- Dots -->
+          <div class="flex gap-2" id="ob-dots">
+            <div class="ob-dot w-6 h-2 bg-white rounded-full"></div>
+            <div class="ob-dot w-2 h-2 bg-white/30 rounded-full"></div>
+            <div class="ob-dot w-2 h-2 bg-white/30 rounded-full"></div>
+            <div class="ob-dot w-2 h-2 bg-white/30 rounded-full"></div>
+          </div>
+          <!-- Next / Done button -->
+          <button id="ob-btn" onclick="obNext()" class="pressable px-6 py-3 bg-white text-gray-900 rounded-2xl font-black text-sm shadow-lg">
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -469,6 +614,20 @@
        SCREEN 8: MAIN DASHBOARD
   ══════════════════════════════════════ -->
   <div id="s-main" class="screen root">
+    <!-- FTUE Overlay -->
+    <div id="ftue-overlay" class="absolute inset-0 z-50 pointer-events-none" style="display:none;">
+      <div class="absolute inset-0 bg-black/70"></div>
+      <!-- Tooltip -->
+      <div id="ftue-box" class="absolute left-5 right-5 bg-white rounded-3xl shadow-2xl p-5 z-10">
+        <p id="ftue-label" class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1"></p>
+        <h4 id="ftue-title" class="text-lg font-black text-gray-900 mb-1"></h4>
+        <p id="ftue-desc" class="text-sm text-gray-500 font-medium mb-4"></p>
+        <div class="flex items-center justify-between">
+          <div class="flex gap-1.5" id="ftue-dots-row"></div>
+          <button id="ftue-btn" onclick="ftueNext()" class="pressable px-5 py-2.5 bg-gray-900 text-white rounded-xl font-bold text-sm">Next</button>
+        </div>
+      </div>
+    </div>
     <!-- Sticky Header -->
     <div class="glass header px-5 pt-14 pb-3 flex justify-between items-center">
       <div>
@@ -1154,23 +1313,80 @@
   }
 
   // ── Registration Steps ──────────────────────────
-  const regTitles = ['About You', 'Lifestyle & Preferences', 'Guardian Details', 'Emergency Contact', 'Consent & Privacy'];
+  // Step map: 1=Basic, 2=Lifestyle, 3=Guardian(conditional), 4=Emergency, 5=Consent
+  const regTitleMap = {
+    1: 'About You',
+    2: 'Lifestyle & Preferences',
+    3: 'Guardian Contact',
+    4: 'Emergency Contact',
+    5: 'Consent & Privacy'
+  };
+
+  // Determine if user needs guardian step (student or under 18)
+  function needsGuardian() {
+    const dobEl = document.querySelector('#reg-s1 input[type="date"]');
+    const occEl = document.querySelector('#reg-s2 select');
+    const isStudent = occEl && occEl.value === 'Student';
+    let isMinor = false;
+    if (dobEl && dobEl.value) {
+      const dob = new Date(dobEl.value);
+      const age = Math.floor((Date.now() - dob) / (365.25 * 24 * 3600 * 1000));
+      isMinor = age < 18;
+    }
+    return isStudent || isMinor;
+  }
+
   function regStep(dir) {
+    // On step 5 "Create Account", go to prospect — wait for user action (don't skip)
+    if (regCurrentStep === 5 && dir === 1) {
+      navTo('s-prospect');
+      regCurrentStep = 1;
+      // Reset UI for future visits
+      document.querySelectorAll('.reg-step').forEach((s, i) => {
+        s.classList.toggle('hidden', i !== 0);
+      });
+      document.getElementById('reg-progress').querySelectorAll('div').forEach((el, i) => {
+        el.classList.toggle('bg-indigo-600', i === 0);
+        el.classList.toggle('bg-gray-200', i > 0);
+      });
+      document.getElementById('reg-step-label').textContent = 'Step 1 of 5';
+      document.getElementById('reg-title').textContent = regTitleMap[1];
+      document.getElementById('reg-back-btn').style.display = 'none';
+      document.getElementById('reg-next-btn').textContent = 'Continue';
+      return;
+    }
+
     const steps = document.querySelectorAll('.reg-step');
     steps[regCurrentStep - 1].classList.add('hidden');
-    regCurrentStep = Math.max(1, Math.min(5, regCurrentStep + dir));
+
+    let next = regCurrentStep + dir;
+    // Skip guardian step if not a student/minor
+    if (next === 3 && !needsGuardian()) {
+      next = next + dir; // skip to 4 or back to 2
+    }
+    next = Math.max(1, Math.min(5, next));
+    regCurrentStep = next;
+
     steps[regCurrentStep - 1].classList.remove('hidden');
-    document.getElementById('reg-step-label').textContent = `Step ${regCurrentStep} of 5`;
-    document.getElementById('reg-title').textContent = regTitles[regCurrentStep - 1];
+
+    // Compute display number accounting for skipped step
+    const displayStep = regCurrentStep;
+    const showsGuardian = needsGuardian();
+    const totalSteps = showsGuardian ? 5 : 4;
+    let displayNum = regCurrentStep;
+    if (!showsGuardian && regCurrentStep >= 4) displayNum = regCurrentStep - 1;
+    if (!showsGuardian && regCurrentStep === 5) displayNum = 4;
+
+    document.getElementById('reg-step-label').textContent = `Step ${displayNum} of ${totalSteps}`;
+    document.getElementById('reg-title').textContent = regTitleMap[regCurrentStep];
     document.getElementById('reg-back-btn').style.display = regCurrentStep > 1 ? '' : 'none';
     document.getElementById('reg-next-btn').textContent = regCurrentStep === 5 ? 'Create Account' : 'Continue';
+
+    // Progress bar — fill up to current step
     document.querySelectorAll('#reg-progress > div').forEach((el, i) => {
       el.classList.toggle('bg-indigo-600', i < regCurrentStep);
       el.classList.toggle('bg-gray-200', i >= regCurrentStep);
     });
-    if (regCurrentStep === 5 && dir === 1) {
-      setTimeout(() => { navTo('s-prospect'); }, 600);
-    }
   }
 
   // ── Tab Switching ───────────────────────────────
@@ -1249,6 +1465,115 @@
     document.getElementById('rating-section').classList.add('hidden');
     document.getElementById('rating-done').classList.remove('hidden');
     lucide.createIcons();
+  }
+
+  // ── Onboarding Carousel ─────────────────────────
+  let obStep = 1;
+  const obTotal = 4;
+
+  function obNext() {
+    if (obStep < obTotal) {
+      document.getElementById('ob-' + obStep).style.display = 'none';
+      obStep++;
+      const slide = document.getElementById('ob-' + obStep);
+      slide.style.display = 'flex';
+      slide.style.flexDirection = 'column';
+      slide.style.justifyContent = 'flex-end';
+      // Update dots
+      const dots = document.querySelectorAll('.ob-dot');
+      dots.forEach((d, i) => {
+        if (i === obStep - 1) {
+          d.style.width = '24px'; d.style.opacity = '1';
+        } else {
+          d.style.width = '8px'; d.style.opacity = '0.3';
+        }
+      });
+      // Last slide: change button
+      if (obStep === obTotal) {
+        document.getElementById('ob-btn').textContent = "Let's go!";
+        document.getElementById('ob-btn').style.background = '#4F46E5';
+        document.getElementById('ob-btn').style.color = 'white';
+      }
+      lucide.createIcons();
+    } else {
+      // Done — go to dashboard with FTUE
+      obStep = 1;
+      document.querySelectorAll('.ob-slide').forEach((s, i) => {
+        s.style.display = i === 0 ? 'flex' : 'none';
+      });
+      document.getElementById('ob-btn').textContent = 'Next';
+      document.getElementById('ob-btn').style.background = 'white';
+      document.getElementById('ob-btn').style.color = '#111827';
+      const dots = document.querySelectorAll('.ob-dot');
+      dots.forEach((d, i) => { d.style.width = i === 0 ? '24px' : '8px'; d.style.opacity = i === 0 ? '1' : '0.3'; });
+      jumpTo('s-main');
+      setTimeout(() => ftueStart(), 400);
+    }
+  }
+
+  // ── FTUE (First Time User Experience) ──────────
+  const ftueSteps = [
+    {
+      label: 'Announcements',
+      title: 'Stay in the loop',
+      desc: "Your PG manager posts notices here — water outages, events, or important updates. Check this daily.",
+      top: '110px'
+    },
+    {
+      label: 'Quick Actions',
+      title: 'Your daily tools',
+      desc: "Tap Menu to see today's meals, Issues to log a problem, Clean to track your room cleaning, and Parcels to collect deliveries.",
+      top: 'auto', bottom: '220px'
+    },
+    {
+      label: 'Payments',
+      title: 'Track your rent',
+      desc: "Tap the Payments tab to view upcoming dues, pay online, and download receipts for your records.",
+      top: 'auto', bottom: '140px'
+    },
+    {
+      label: 'Profile',
+      title: 'Manage your stay',
+      desc: "Tap Profile to declare a leave, see your agreement, contact PG info, or access your stay history across all PGs.",
+      top: 'auto', bottom: '140px'
+    }
+  ];
+  let ftueStep = 0;
+
+  function ftueStart() {
+    ftueStep = 0;
+    const overlay = document.getElementById('ftue-overlay');
+    overlay.style.display = 'block';
+    overlay.style.pointerEvents = 'auto';
+    renderFtue();
+  }
+
+  function renderFtue() {
+    const s = ftueSteps[ftueStep];
+    document.getElementById('ftue-label').textContent = s.label;
+    document.getElementById('ftue-title').textContent = s.title;
+    document.getElementById('ftue-desc').textContent = s.desc;
+    document.getElementById('ftue-btn').textContent = ftueStep === ftueSteps.length - 1 ? 'Got it!' : 'Next';
+    // Position tooltip
+    const box = document.getElementById('ftue-box');
+    if (s.top && s.top !== 'auto') { box.style.top = s.top; box.style.bottom = 'auto'; }
+    else if (s.bottom) { box.style.bottom = s.bottom; box.style.top = 'auto'; }
+    // Dots
+    const dotsEl = document.getElementById('ftue-dots-row');
+    dotsEl.innerHTML = ftueSteps.map((_, i) =>
+      `<div style="width:${i===ftueStep?'20px':'8px'};height:8px;border-radius:4px;background:${i===ftueStep?'#4F46E5':'#D1D5DB'};transition:width 0.2s;"></div>`
+    ).join('');
+  }
+
+  function ftueNext() {
+    ftueStep++;
+    if (ftueStep >= ftueSteps.length) {
+      const overlay = document.getElementById('ftue-overlay');
+      overlay.style.display = 'none';
+      overlay.style.pointerEvents = 'none';
+      return;
+    }
+    renderFtue();
   }
 </script>
 </body>

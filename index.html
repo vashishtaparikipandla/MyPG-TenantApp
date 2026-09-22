@@ -97,11 +97,86 @@
   <div class="notch"></div>
 
   <!-- ══════════════════════════════════════
+       SCREEN 0: PROTOTYPE NAVIGATOR
+  ══════════════════════════════════════ -->
+  <div id="s-navigator" class="screen active" style="background: #0f172a;">
+    <div class="flex flex-col h-full px-6 pt-16 pb-8">
+      <div class="mb-8">
+        <div class="w-10 h-10 bg-indigo-500/20 rounded-2xl flex items-center justify-center mb-4">
+          <i data-lucide="layers" class="w-5 h-5 text-indigo-400"></i>
+        </div>
+        <h1 class="text-2xl font-black text-white mb-1">MyPG Prototype</h1>
+        <p class="text-sm text-slate-400 font-medium">Choose a flow to explore.</p>
+      </div>
+
+      <div class="scroll flex flex-col gap-3 pb-4">
+        <button onclick="jumpTo('s-main')" class="pressable w-full text-left rounded-2xl p-4 flex items-center gap-4" style="background: #4F46E5;">
+          <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="home" class="w-5 h-5 text-white"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-black text-white">Active Tenant Dashboard</p>
+            <p class="text-xs text-indigo-200 font-medium mt-0.5">Rent, issues, food, parcels &amp; more</p>
+          </div>
+          <div class="text-[10px] font-bold px-2 py-1 rounded-full text-white" style="background: rgba(255,255,255,0.2);">START HERE</div>
+        </button>
+
+        <button onclick="jumpTo('s-register')" class="pressable w-full text-left rounded-2xl p-4 flex items-center gap-4" style="background: #1e293b;">
+          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="user-plus" class="w-5 h-5 text-slate-200"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-black text-white">New User Registration</p>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">5-step wizard — name, guardian, consent</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </button>
+
+        <button onclick="jumpTo('s-prospect')" class="pressable w-full text-left rounded-2xl p-4 flex items-center gap-4" style="background: #1e293b;">
+          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="qr-code" class="w-5 h-5 text-slate-200"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-black text-white">Find &amp; Join a PG</p>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Code, QR scan, room choice, request</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </button>
+
+        <button onclick="jumpTo('s-activation')" class="pressable w-full text-left rounded-2xl p-4 flex items-center gap-4" style="background: #1e293b;">
+          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="file-check-2" class="w-5 h-5 text-slate-200"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-black text-white">Activation &amp; Agreement</p>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Review offer, sign, go active</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </button>
+
+        <button onclick="jumpTo('s-login')" class="pressable w-full text-left rounded-2xl p-4 flex items-center gap-4" style="background: #1e293b;">
+          <div class="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+            <i data-lucide="smartphone" class="w-5 h-5 text-slate-200"></i>
+          </div>
+          <div class="flex-1">
+            <p class="font-black text-white">Login Screen</p>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Phone number + OTP</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+        </button>
+      </div>
+
+      <p class="text-center text-xs text-slate-600 font-medium mt-4">MyPG Tenant App · Prototype v0.3</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
        SCREEN 1: LOGIN
   ══════════════════════════════════════ -->
-  <div id="s-login" class="screen active">
+  <div id="s-login" class="screen">
     <div class="flex flex-col h-full px-7 pt-20 pb-10 bg-white justify-between">
       <div>
+        <button onclick="navBack()" class="pressable w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-6"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
         <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 text-indigo-600"><i data-lucide="building-2" class="w-7 h-7"></i></div>
         <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-2">MyPG</h1>
         <p class="text-base text-gray-500 font-medium mb-12">Your home, managed better.</p>
@@ -526,6 +601,9 @@
       </button>
       <button id="nav-profile" onclick="switchTab('profile')" class="nav-item pressable">
         <i data-lucide="user" class="w-5 h-5"></i><span>Profile</span>
+      </button>
+      <button onclick="jumpTo('s-navigator')" class="nav-item pressable" style="color: #A5B4FC;">
+        <i data-lucide="layers" class="w-5 h-5"></i><span>Flows</span>
       </button>
     </div>
   </div>
@@ -1010,6 +1088,20 @@
   
   let regCurrentStep = 1;
   let navStack = [];
+
+  // ── Jump from Navigator (clears all state) ───────
+  function jumpTo(id) {
+    // Reset everything
+    document.querySelectorAll('.screen').forEach(s => {
+      s.classList.remove('active', 'behind', 'root');
+    });
+    navStack = [id];
+    const target = document.getElementById(id);
+    target.classList.add('active');
+    // If jumping to main, also mark it root so sub-pages slide over it
+    if (id === 's-main') target.classList.add('root');
+    lucide.createIcons();
+  }
 
   // ── Navigation ──────────────────────────────────
   function navTo(id) {

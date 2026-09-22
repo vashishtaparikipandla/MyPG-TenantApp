@@ -6,486 +6,1158 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    
-    :root { --primary: #4F46E5; --bg: #F3F4F6; }
-    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    :root { --primary: #4F46E5; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem; }
     ::-webkit-scrollbar { display: none; }
+    .device { width: 393px; height: 852px; background: #F5F5F7; border-radius: 54px; box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), inset 0 0 0 14px #111; overflow: hidden; position: relative; flex-shrink: 0; }
+    .notch { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 125px; height: 34px; background: #111; border-radius: 20px; z-index: 200; }
     
-    .device-frame {
-      width: 390px; height: 844px; background: var(--bg); border-radius: 50px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 12px #0f172a;
-      overflow: hidden; position: relative;
-    }
-    .notch {
-      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 30px; background: #0f172a; border-radius: 20px; z-index: 100;
-    }
-
-    .screen {
-      position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
-      transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;
-    }
+    /* Screen system */
+    .screen { position: absolute; inset: 0; background: #F5F5F7; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10; overflow: hidden; }
     .screen.active { transform: translateX(0); z-index: 20; }
-    .screen.exit-left { transform: translateX(-30%); z-index: 10; opacity: 0.8; }
-    
-    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.4); }
-    
-    .gradient-rent { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4); position: relative; overflow: hidden; }
-    .gradient-rent::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); transform: rotate(30deg); pointer-events: none; }
+    .screen.behind { transform: translateX(-30%); z-index: 15; opacity: 0.85; transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s; }
+    .screen.root { transform: translateX(0); z-index: 5; }
 
-    .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    /* Page-level modals (not drawers) */
+    .page-modal { position: absolute; inset: 0; background: #F5F5F7; z-index: 60; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; overflow: hidden; }
+    .page-modal.active { transform: translateY(0); }
+
+    /* Sheet overlay for small confirmations only */
+    .sheet-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.45); z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
     .sheet-overlay.active { opacity: 1; pointer-events: auto; }
-    
-    .sheet {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 85%;
-      background: var(--bg); border-radius: 32px 32px 0 0;
-      transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 51; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-    }
-    .sheet.active { transform: translateY(0); }
-    .sheet-handle { width: 40px; height: 5px; background: #D1D5DB; border-radius: 3px; margin: 12px auto; }
+    .mini-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: white; border-radius: 28px 28px 0 0; z-index: 90; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); max-height: 60%; }
+    .mini-sheet.active { transform: translateY(0); }
 
-    .pressable:active { transform: scale(0.96); transition: transform 0.1s; }
-    .sos-ring { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-    @keyframes ping { 75%, 100% { transform: scale(1.8); opacity: 0; } }
-    .scroll-area { overflow-y: auto; flex: 1; padding-bottom: 120px; }
+    /* Glass nav / header */
+    .glass { background: rgba(255,255,255,0.88); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid rgba(0,0,0,0.06); }
     
-    .lucide { stroke-width: 2.25; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .hide-view { display: none; }
-    .show-view { display: flex; }
-    .menu-day.active { background: #4F46E5; color: white; border-color: #4F46E5; }
+    .scroll { overflow-y: auto; flex: 1; }
+    .pb-nav { padding-bottom: 100px; }
+    .pb-8x { padding-bottom: 32px; }
+    
+    .pressable { transition: transform 0.12s, opacity 0.12s; cursor: pointer; }
+    .pressable:active { transform: scale(0.96); opacity: 0.85; }
+    
+    /* Status chips */
+    .chip { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; }
+    .chip-blue { background: #EEF2FF; color: #4338CA; }
+    .chip-amber { background: #FFFBEB; color: #B45309; }
+    .chip-green { background: #ECFDF5; color: #065F46; }
+    .chip-red { background: #FEF2F2; color: #991B1B; }
+    .chip-gray { background: #F3F4F6; color: #374151; }
+
+    /* Tabs */
+    .tab-bar { display: flex; background: #E5E7EB; padding: 3px; border-radius: 10px; }
+    .tab-pill { flex: 1; text-align: center; padding: 6px; font-size: 12px; font-weight: 700; border-radius: 8px; color: #6B7280; cursor: pointer; transition: all 0.2s; }
+    .tab-pill.active { background: white; color: #111827; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
+
+    /* Bottom nav */
+    .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 90px; padding-bottom: 28px; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.07); display: flex; justify-content: space-around; align-items: center; z-index: 40; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 12px; border-radius: 14px; cursor: pointer; }
+    .nav-item span { font-size: 10px; font-weight: 700; }
+    .nav-item.active { color: #4F46E5; }
+    .nav-item:not(.active) { color: #9CA3AF; }
+
+    /* Cards */
+    .card { background: white; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.06); }
+    .divider { height: 1px; background: #F3F4F6; }
+
+    /* Input */
+    input, select, textarea { outline: none; font-family: 'Inter', sans-serif; }
+    .field { width: 100%; padding: 14px 16px; background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 14px; font-size: 15px; font-weight: 500; color: #111827; transition: border-color 0.2s; }
+    .field:focus { border-color: #4F46E5; background: #FAFAFE; }
+    .label { font-size: 12px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px; }
+
+    /* Buttons */
+    .btn-primary { width: 100%; padding: 16px; background: #111827; color: white; border-radius: 16px; font-size: 16px; font-weight: 700; text-align: center; cursor: pointer; }
+    .btn-secondary { width: 100%; padding: 16px; background: #F3F4F6; color: #374151; border-radius: 16px; font-size: 16px; font-weight: 700; text-align: center; cursor: pointer; }
+    .btn-indigo { width: 100%; padding: 16px; background: #4F46E5; color: white; border-radius: 16px; font-size: 16px; font-weight: 700; text-align: center; cursor: pointer; box-shadow: 0 4px 16px rgba(79,70,229,0.3); }
+
+    /* Star rating */
+    .star { font-size: 28px; cursor: pointer; transition: transform 0.1s; color: #D1D5DB; }
+    .star.active { color: #F59E0B; transform: scale(1.15); }
+
+    /* Row list item */
+    .list-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: white; border-bottom: 1px solid #F3F4F6; cursor: pointer; }
+    .list-row:last-child { border-bottom: none; }
+    .list-row:active { background: #F9FAFB; }
+
+    .sos-ring { animation: ping 2s cubic-bezier(0,0,0.2,1) infinite; }
+    @keyframes ping { 75%, 100% { transform: scale(1.8); opacity: 0; } }
+    
+    .lucide { stroke-width: 2.2; }
+    .tab-section { display: none; } 
+    .tab-section.active { display: block; }
   </style>
 </head>
-<body class="bg-gray-200 p-8 flex justify-center items-center min-h-screen">
+<body>
+<div class="device">
+  <div class="notch"></div>
 
-  <div class="device-frame">
-    <div class="notch"></div>
-
-    <!-- 1. LOGIN SCREEN -->
-    <div id="screen-login" class="screen active">
-      <div class="flex flex-col h-full p-8 pt-24 bg-white justify-between">
-        <div>
-          <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-indigo-600"><i data-lucide="building-2" class="w-8 h-8"></i></div>
-          <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Welcome to MyPG</h1>
-          <p class="text-lg text-gray-500 font-medium">Your modern living experience starts here.</p>
-          <div class="mt-12 space-y-3">
-            <label class="text-sm font-bold text-gray-700 uppercase tracking-wider">Mobile Number</label>
-            <div class="flex items-center p-4 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-indigo-500 focus-within:ring-4 transition-all">
-              <span class="text-gray-400 font-semibold text-lg mr-3">+91</span>
-              <input id="login-phone" type="tel" class="bg-transparent w-full outline-none text-xl font-semibold text-gray-900" placeholder="9999999999" maxlength="10" value="9999999999">
-            </div>
-          </div>
+  <!-- ══════════════════════════════════════
+       SCREEN 1: LOGIN
+  ══════════════════════════════════════ -->
+  <div id="s-login" class="screen active">
+    <div class="flex flex-col h-full px-7 pt-20 pb-10 bg-white justify-between">
+      <div>
+        <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 text-indigo-600"><i data-lucide="building-2" class="w-7 h-7"></i></div>
+        <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-2">MyPG</h1>
+        <p class="text-base text-gray-500 font-medium mb-12">Your home, managed better.</p>
+        <label class="label">Mobile Number</label>
+        <div class="flex items-center field gap-3 mb-4">
+          <span class="text-gray-500 font-bold">+91</span>
+          <input type="tel" id="phone-input" class="bg-transparent flex-1 text-lg font-bold" placeholder="9999999999" value="9999999999" maxlength="10">
         </div>
-        <button onclick="navTo('screen-otp')" class="pressable w-full py-4 bg-gray-900 text-white rounded-2xl font-bold text-lg shadow-xl">Continue</button>
       </div>
+      <button onclick="navTo('s-otp')" class="pressable btn-primary">Continue</button>
     </div>
-
-    <!-- 2. OTP SCREEN -->
-    <div id="screen-otp" class="screen">
-      <div class="flex flex-col h-full p-8 pt-20 bg-white justify-between">
-        <div>
-          <button onclick="navBack()" class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-6 pressable text-gray-600"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
-          <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Verify it's you</h2>
-          <p class="text-gray-500 font-medium mb-4">We've sent a 6-digit code to <b class="text-gray-900">+91 9999999999</b></p>
-          <input id="login-otp" type="tel" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-3xl font-bold text-center tracking-[0.4em] text-gray-900 focus:border-indigo-500 transition-all mt-6" value="999999" maxlength="6">
-        </div>
-        <button onclick="login()" class="pressable w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl">Verify & Login</button>
-      </div>
-    </div>
-
-    <!-- 5. MAIN DASHBOARD -->
-    <div id="screen-main" class="screen bg-[#F8FAFC]">
-      
-      <!-- Redesigned Clean Header -->
-      <div class="glass fixed top-0 w-full pt-14 pb-4 px-6 z-30 flex justify-between items-center">
-        <div>
-          <h2 class="text-xl font-extrabold text-gray-900 leading-tight">Hi, Rohit</h2>
-          <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-0.5">Tuesday, 14 Oct</p>
-        </div>
-        <div class="flex gap-2 text-gray-700">
-          <button onclick="openSheet('sheet-inbox')" class="pressable w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm relative">
-            <span class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></span><i data-lucide="bell" class="w-5 h-5"></i>
-          </button>
-          <button onclick="openSheet('sheet-sos')" class="pressable w-10 h-10 bg-red-50 border border-red-100 rounded-full flex items-center justify-center text-red-600">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- TAB 1: HOME -->
-      <div id="tab-home" class="scroll-area pt-28 px-6 tab-content active">
-        
-        <!-- Announcements / Noticeboard -->
-        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex gap-3 mb-6 shadow-sm items-start">
-          <i data-lucide="megaphone" class="w-5 h-5 text-indigo-600 shrink-0 mt-0.5"></i>
-          <div>
-            <h4 class="font-bold text-indigo-900 text-sm">Water supply maintenance</h4>
-            <p class="text-xs text-indigo-700 mt-1 font-medium">Water will be unavailable from 2 PM to 4 PM today due to tank cleaning.</p>
-          </div>
-        </div>
-
-        <div class="gradient-rent rounded-3xl p-6 mb-6">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <p class="text-indigo-200 text-sm font-semibold mb-1">Upcoming Rent</p>
-              <h3 class="text-4xl font-extrabold">₹8,500</h3>
-            </div>
-            <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/30">Oct 5th</span>
-          </div>
-          <div class="flex gap-3 mt-6">
-            <button class="pressable flex-1 py-3.5 bg-white text-gray-900 rounded-xl font-bold shadow-lg text-sm">Pay via UPI</button>
-            <button class="pressable flex-1 py-3.5 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm">Log Cash</button>
-          </div>
-        </div>
-
-        <!-- Open Room & Roommates Details -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 mb-6">
-          <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
-            <div>
-              <h4 class="font-extrabold text-gray-900 text-lg">Room 204B</h4>
-              <p class="text-xs text-gray-500 font-bold uppercase mt-1 tracking-wider">Double Sharing • Sunrise PG</p>
-            </div>
-            <!-- WiFi quick access moved here since it belongs to the room -->
-            <button onclick="openSheet('sheet-wifi')" class="flex flex-col items-center gap-1 text-indigo-600 pressable">
-              <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center"><i data-lucide="wifi" class="w-5 h-5"></i></div>
-            </button>
-          </div>
-          
-          <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Roommates</h5>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-bold">K</div>
-              <p class="font-bold text-gray-900">Karthik</p>
-            </div>
-            <button class="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-bold flex items-center gap-2 pressable"><i data-lucide="phone" class="w-3 h-3"></i> Call</button>
-          </div>
-        </div>
-
-        <!-- Quick Actions (Only Daily Needs) -->
-        <h4 class="text-lg font-bold text-gray-900 mb-3 px-1">Quick Actions</h4>
-        <div class="grid grid-cols-4 gap-4 mb-6">
-          <button onclick="openSheet('sheet-food')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="utensils" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Menu</span>
-          </button>
-          <button onclick="openSheet('sheet-issues')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="ticket" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Issues</span>
-          </button>
-          <button onclick="openSheet('sheet-clean')" class="pressable flex flex-col items-center gap-2">
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Clean</span>
-          </button>
-          <button onclick="openSheet('sheet-parcels')" class="pressable flex flex-col items-center gap-2 relative">
-            <div class="absolute top-0 right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></div>
-            <div class="w-14 h-14 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-gray-600"><i data-lucide="package" class="w-6 h-6"></i></div>
-            <span class="text-[11px] font-bold text-gray-600">Parcels</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- TAB 2: PAYMENTS -->
-      <div id="tab-payments" class="scroll-area pt-28 px-6 tab-content">
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Payments</h2>
-        
-        <div class="bg-red-50 border border-red-100 rounded-3xl p-6 mb-8 shadow-sm">
-          <p class="text-red-800 text-sm font-semibold mb-1">Overdue Amount</p>
-          <h3 class="text-4xl font-extrabold text-red-600 mb-4">₹2,500</h3>
-          <p class="text-red-700 text-sm font-medium mb-4">Pending electricity bill from last month.</p>
-          <button class="pressable w-full py-3.5 bg-red-600 text-white rounded-xl font-bold shadow-lg text-sm">Pay Now</button>
-        </div>
-
-        <h4 class="text-lg font-bold text-gray-900 mb-4 px-1">History</h4>
-        <div class="flex flex-col gap-3">
-          <div class="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-5 h-5"></i></div>
-              <div><p class="font-bold text-gray-900">Sep Rent</p><p class="text-xs font-medium text-gray-500 mt-0.5">Paid on 4 Sep</p></div>
-            </div>
-            <div class="text-right flex items-center gap-3"><span class="font-bold text-gray-900">₹8,500</span><button class="text-indigo-600"><i data-lucide="download" class="w-5 h-5"></i></button></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: PROFILE (Redesigned IA) -->
-      <div id="tab-profile" class="scroll-area pt-28 px-6 tab-content">
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-2">My Profile</h2>
-        <p class="text-gray-500 font-medium mb-6">+91 9999999999</p>
-        
-        <!-- Section 1: Specific to this Hostel -->
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-2">Sunrise PG Details</h4>
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-          <button onclick="openSheet('sheet-pg-info')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="info" class="w-5 h-5 text-gray-400"></i> Amenities & House Rules</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-          <button onclick="openSheet('sheet-docs')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="file-check" class="w-5 h-5 text-gray-400"></i> Rental Agreement & KYC</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-          <button onclick="openSheet('sheet-leave')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="plane" class="w-5 h-5 text-gray-400"></i> Declare Leave</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-          <button onclick="openSheet('sheet-moveout')" class="w-full p-4 flex items-center justify-between pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-red-600 font-bold"><i data-lucide="log-out" class="w-5 h-5 text-red-400"></i> Request Move Out</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-        </div>
-
-        <!-- Section 2: App/Service Specific -->
-        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-2">App & Account</h4>
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-8">
-          <button onclick="openSheet('sheet-stays')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="history" class="w-5 h-5 text-gray-400"></i> My Stay History</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-          <button onclick="openSheet('sheet-refer')" class="w-full p-4 flex items-center justify-between border-b border-gray-100 pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="gift" class="w-5 h-5 text-gray-400"></i> Refer & Earn</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-          <button onclick="openSheet('sheet-help')" class="w-full p-4 flex items-center justify-between pressable bg-white active:bg-gray-50">
-            <div class="flex items-center gap-3 text-gray-800 font-bold"><i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i> Help & FAQs</div><i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-          </button>
-        </div>
-
-        <button onclick="navTo('screen-login')" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold pressable mb-4">Log Out</button>
-      </div>
-
-      <!-- Bottom Nav (Sticky) -->
-      <div class="glass fixed bottom-0 w-full h-24 pb-6 flex justify-around items-center z-40 rounded-b-[40px]">
-        <button id="nav-btn-home" onclick="switchTab('home')" class="nav-btn flex flex-col items-center gap-1.5 text-indigo-600 w-16 transition-colors">
-          <i data-lucide="home" class="w-6 h-6"></i><span class="text-[10px] font-bold">Home</span>
-        </button>
-        <button id="nav-btn-payments" onclick="switchTab('payments')" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 hover:text-indigo-600 transition-colors w-16">
-          <i data-lucide="credit-card" class="w-6 h-6"></i><span class="text-[10px] font-bold">Payments</span>
-        </button>
-        <button id="nav-btn-profile" onclick="switchTab('profile')" class="nav-btn flex flex-col items-center gap-1.5 text-gray-400 hover:text-indigo-600 transition-colors w-16">
-          <i data-lucide="user" class="w-6 h-6"></i><span class="text-[10px] font-bold">Profile</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- BOTTOM SHEETS -->
-    <div id="sheet-overlay" class="sheet-overlay" onclick="closeSheet()"></div>
-
-    <!-- 1. FOOD SHEET (Redesigned Compact View) -->
-    <div id="sheet-food" class="sheet !h-[90%]">
-      <div class="sheet-handle"></div>
-      <div class="px-6 pb-4 border-b border-gray-100 flex flex-col mt-2">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-extrabold text-gray-900">Food Menu</h2>
-          <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-        </div>
-        <!-- Weekly Scroll -->
-        <div class="flex gap-2 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
-          <button class="menu-day active min-w-[3.5rem] p-2 rounded-xl border border-gray-200 flex flex-col items-center pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Mon</span><span class="text-sm font-extrabold">14</span>
-          </button>
-          <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Tue</span><span class="text-sm font-extrabold">15</span>
-          </button>
-          <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Wed</span><span class="text-sm font-extrabold">16</span>
-          </button>
-          <button class="menu-day min-w-[3.5rem] p-2 bg-white rounded-xl border border-gray-200 flex flex-col items-center text-gray-500 pressable">
-            <span class="text-[10px] font-bold uppercase tracking-wide">Thu</span><span class="text-sm font-extrabold">17</span>
-          </button>
-        </div>
-      </div>
-      
-      <!-- Day View (Both meals side-by-side or stacked cleanly) -->
-      <div class="scroll-area p-6 bg-gray-50">
-        <h4 class="font-bold text-gray-400 uppercase tracking-widest text-xs mb-3 ml-1">Today's Meals</h4>
-        
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-4">
-          <!-- LUNCH -->
-          <div class="p-4 border-b border-gray-100 flex flex-col">
-            <div class="flex justify-between items-start mb-2">
-              <h4 class="font-extrabold text-gray-900 text-lg">Lunch <span class="text-xs text-gray-400 font-medium ml-2">12:30 PM</span></h4>
-              <span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Locked</span>
-            </div>
-            <p class="text-gray-500 text-sm font-medium mb-3">Paneer Butter Masala, Dal, Roti, Rice</p>
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-              <span class="font-bold text-green-700 text-sm">You are opted IN</span>
-              <div class="w-10 h-5 bg-green-500 rounded-full opacity-50 relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div></div>
-            </div>
-          </div>
-          
-          <!-- DINNER -->
-          <div class="p-4 flex flex-col">
-            <div class="flex justify-between items-start mb-2">
-              <h4 class="font-extrabold text-gray-900 text-lg">Dinner <span class="text-xs text-gray-400 font-medium ml-2">8:00 PM</span></h4>
-              <span class="text-indigo-600 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Locks in 4h</span>
-            </div>
-            <p class="text-gray-500 text-sm font-medium mb-3">Aloo Gobi, Dal Tadka, Rice, Gulab Jamun</p>
-            <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
-              <span class="font-bold text-green-700 text-sm">You are opted IN</span>
-              <div class="pressable w-10 h-5 bg-green-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow-sm"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Help & FAQs Sheet -->
-    <div id="sheet-help" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="help-circle" class="w-6 h-6"></i> Help & FAQs</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-    <div class="scroll-area p-6 bg-gray-50 space-y-4">
-      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
-        <h4 class="font-bold text-gray-900">What is the Move Out policy?</h4>
-        <p class="text-sm text-gray-500 mt-2">You must provide a 30-day notice via the app. The security deposit will be settled after room inspection on your exit date.</p>
-      </div>
-      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
-        <h4 class="font-bold text-gray-900">How do I change my room?</h4>
-        <p class="text-sm text-gray-500 mt-2">Speak to your manager to see if beds are available. If approved, they will change it in the system.</p>
-      </div>
-      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
-        <h4 class="font-bold text-gray-900">Can guests stay over?</h4>
-        <p class="text-sm text-gray-500 mt-2">No, outside guests are only permitted in the lobby area during daytime hours.</p>
-      </div>
-    </div></div>
-
-    <!-- PG INFO (Amenities & Rules) -->
-    <div id="sheet-pg-info" class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2">
-        <h2 class="text-2xl font-extrabold text-gray-900">About PG</h2>
-        <button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      <div class="scroll-area p-6 bg-gray-50">
-        <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">Amenities</h4>
-        <div class="grid grid-cols-2 gap-3 mb-8">
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="wifi" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">WiFi</span></div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="wind" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">AC</span></div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="zap" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Power Backup</span></div>
-          <div class="bg-white p-4 rounded-2xl border border-gray-200 flex flex-col items-center gap-2 shadow-sm"><i data-lucide="dumbbell" class="text-indigo-600"></i><span class="text-xs font-bold text-gray-700">Gym</span></div>
-        </div>
-        <h4 class="font-bold text-gray-500 text-sm uppercase mb-3 ml-1">House Rules</h4>
-        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-          <div class="flex items-start gap-3"><i data-lucide="clock" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-gray-900 text-sm">Curfew: 11:30 PM</p><p class="text-xs text-gray-500">Main gate locked at night.</p></div></div>
-          <div class="flex items-start gap-3"><i data-lucide="ban" class="w-5 h-5 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-gray-900 text-sm">No Smoking/Alcohol</p><p class="text-xs text-gray-500">Strictly prohibited.</p></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- My Stays (Various PGs) -->
-    <div id="sheet-stays" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900 flex items-center gap-2"><i data-lucide="history" class="w-6 h-6"></i> Stay History</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div>
-    <div class="scroll-area p-6 bg-gray-50">
-      <p class="text-sm text-gray-500 mb-6 font-medium">Your private record of all stays across PG Wonders partner properties.</p>
-      <div class="bg-white p-5 rounded-2xl border border-indigo-200 shadow-sm mb-4 border-l-4 border-l-indigo-600">
-        <div class="flex justify-between items-start"><h4 class="font-bold text-lg text-gray-900">Sunrise PG</h4><span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded uppercase">Current</span></div>
-        <p class="text-sm text-gray-500 mt-1">Delhi • Move-in: Aug 2026</p>
-      </div>
-      <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm opacity-80 mb-4">
-        <div class="flex justify-between items-start"><h4 class="font-bold text-lg text-gray-900">Green Valley Hostel</h4><span class="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded uppercase">Past Stay</span></div>
-        <p class="text-sm text-gray-500 mt-1">Bangalore • Mar 2025 - Jul 2026</p>
-      </div>
-    </div></div>
-    
-    <!-- Minor Sheets (Issues, Docs, Parcels, Leave, WiFi, Moveout, Inbox, SOS) -->
-    <div id="sheet-issues" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900" id="issues-title">Issues</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button></div><div id="issues-list-view" class="scroll-area p-6 flex-col show-view"><div class="bg-white p-5 rounded-2xl border mb-6 shadow-sm"><div class="flex justify-between items-start mb-2"><h4 class="font-bold text-lg text-gray-900">AC not cooling</h4><span class="text-[10px] font-bold px-2 py-1 bg-orange-100 text-orange-800 rounded-lg uppercase">In Progress</span></div><p class="text-gray-500 text-sm mb-3">Room 204B • Raised yesterday</p><p class="text-xs font-semibold text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100">Assigned to Ravi. He will visit at 4 PM today.</p></div><button onclick="toggleIssueView('form')" class="pressable w-full py-4 bg-gray-900 text-white rounded-xl font-bold shadow-lg mt-auto mb-4 flex justify-center items-center gap-2"><i data-lucide="plus" class="w-5 h-5"></i> Raise New Issue</button></div><div id="issues-form-view" class="scroll-area p-6 flex-col hide-view bg-gray-50"><label class="text-xs font-bold text-gray-500 uppercase">Category</label><select class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-semibold text-gray-900"><option>Electrical</option><option>Plumbing</option><option>Cleaning</option><option>WiFi</option></select><label class="text-xs font-bold text-gray-500 uppercase">Description</label><textarea class="w-full p-4 bg-white rounded-xl border border-gray-200 mb-4 mt-1 font-medium text-gray-900 resize-none h-24" placeholder="Describe the issue..."></textarea><div class="flex gap-3 mt-auto"><button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-gray-200 text-gray-700 rounded-xl font-bold">Cancel</button><button onclick="toggleIssueView('list')" class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg">Submit</button></div></div></div>
-
-    <div id="sheet-parcels" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Parcels</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 flex flex-col bg-gray-50"><div id="parcel-card" class="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="h-32 bg-gray-100 -mx-5 -mt-5 mb-4 flex items-center justify-center relative border-b border-gray-200"><img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80" class="w-full h-full object-cover opacity-80" /><div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div><span class="absolute bottom-3 left-4 text-white font-bold drop-shadow-md">Amazon Delivery</span></div><div class="flex justify-between items-start mb-4"><div><h4 class="font-extrabold text-lg text-gray-900">Received at Reception</h4><p class="text-gray-500 text-sm font-medium">Today at 2:15 PM</p></div></div><button id="parcel-collect-btn" onclick="collectParcel()" class="pressable w-full py-3.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg flex justify-center items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> Mark as Collected</button></div></div></div>
-    
-    <div id="sheet-docs" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Documents</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 bg-gray-50 space-y-4"><div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Aadhaar Card</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Verified ✓</p></div><button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="eye" class="w-5 h-5"></i></button></div><div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Rental Agreement</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Signed ✓</p></div><button class="p-2 bg-gray-100 text-gray-600 rounded-lg"><i data-lucide="download" class="w-5 h-5"></i></button></div></div></div>
-
-    <div id="sheet-refer" class="sheet"><div class="sheet-handle"></div><div class="px-6 pb-4 border-b border-gray-100 flex justify-between items-center mt-2"><h2 class="text-2xl font-extrabold text-gray-900">Refer & Earn</h2><button onclick="closeSheet()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center font-bold text-gray-500"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="scroll-area p-6 bg-gray-50 text-center"><div class="w-24 h-24 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="gift" class="w-12 h-12"></i></div><h3 class="text-2xl font-extrabold mb-2">Get ₹500 Off Rent</h3><p class="text-gray-500 font-medium mb-8">When a friend joins, you both get a ₹500 discount.</p><div class="bg-white border p-4 rounded-2xl mb-6 shadow-sm"><p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Your Code</p><h4 class="text-3xl font-extrabold text-indigo-600 tracking-widest">ROHIT500</h4></div><button class="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold shadow-lg flex items-center justify-center gap-2"><i data-lucide="share-2" class="w-5 h-5"></i> WhatsApp</button></div></div>
-
-    <div id="sheet-clean" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Cleaning</h2><div class="bg-white p-5 rounded-2xl border"><h4 class="font-bold text-lg">Next: Tomorrow 10AM</h4><button class="w-full py-3 bg-gray-100 rounded-xl mt-3 font-bold text-gray-700">Skip Tomorrow</button></div></div></div>
-    <div id="sheet-leave" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Leave</h2><p class="text-gray-500 mb-4 font-medium text-sm">Pause meals and cleaning while away.</p><label class="font-bold text-xs text-gray-500 uppercase">Start Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-3 mt-1 font-bold text-gray-900"><button class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold">Submit</button></div></div>
-    <div id="sheet-wifi" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">WiFi Details</h2><div class="bg-white p-5 rounded-2xl border flex flex-col gap-3 shadow-sm"><div class="flex justify-between"><span class="text-gray-500 font-bold text-sm">Network</span><span class="font-bold text-gray-900">Sunrise_5G</span></div><div class="flex justify-between items-center"><span class="text-gray-500 font-bold text-sm">Password</span><span class="font-bold tracking-widest text-xl text-gray-900">••••••••</span></div></div><button class="w-full py-4 bg-gray-900 text-white mt-6 rounded-xl font-bold flex items-center justify-center gap-2 pressable"><i data-lucide="copy" class="w-5 h-5"></i> Copy Password</button></div></div>
-    <div id="sheet-moveout" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4 text-red-600">Move Out</h2><p class="text-red-500 bg-red-50 p-4 rounded-xl font-medium mb-4 border border-red-100">Requires 30 days notice to avoid penalty.</p><label class="font-bold text-xs text-gray-500 uppercase">Target Exit Date</label><input type="date" class="w-full p-4 bg-gray-50 rounded-xl border mb-6 mt-1 font-bold"><button class="w-full py-4 bg-red-600 text-white rounded-xl font-bold shadow-lg">Initiate Exit Process</button></div></div>
-    <div id="sheet-inbox" class="sheet"><div class="sheet-handle"></div><div class="p-6"><h2 class="text-2xl font-extrabold mb-4">Inbox</h2><div class="bg-white p-4 rounded-2xl border-l-4 border-red-500 shadow-sm"><span class="text-xs font-bold text-red-500 uppercase">Urgent</span><h4 class="font-bold text-lg mt-1 text-gray-900">Power Outage Tomorrow</h4><p class="text-sm text-gray-600 mt-1">Maintenance from 2 PM to 5 PM.</p></div></div></div>
-    <div id="sheet-sos" class="sheet !bg-red-600 !h-[90%]"><div class="sheet-handle !bg-red-400"></div><div class="px-6 mt-4 flex justify-between items-center"><h2 class="text-2xl font-extrabold text-white">Emergency SOS</h2><button onclick="closeSheet()" class="w-8 h-8 bg-red-700 rounded-full flex items-center justify-center font-bold text-white"><i data-lucide="x" class="w-4 h-4"></i></button></div><div class="flex-1 flex flex-col items-center justify-center p-6 text-center"><div class="relative w-56 h-56 flex items-center justify-center mb-12"><div class="absolute inset-0 bg-red-500 rounded-full sos-ring"></div><button class="pressable w-48 h-48 bg-white text-red-600 rounded-full flex items-center justify-center shadow-2xl relative z-10 border-8 border-red-500"><span class="font-extrabold text-5xl">SOS</span></button></div><p class="text-red-100 font-medium text-lg px-4 mb-10">Press and hold to instantly alert the Manager, Security, and your Guardian.</p><button class="pressable w-full py-4 bg-red-800 text-white rounded-2xl font-bold text-lg border border-red-500 flex justify-center items-center gap-2"><i data-lucide="phone" class="w-5 h-5"></i> Call 112 (Police)</button></div></div>
-
   </div>
 
-  <script>
+  <!-- ══════════════════════════════════════
+       SCREEN 2: OTP
+  ══════════════════════════════════════ -->
+  <div id="s-otp" class="screen">
+    <div class="flex flex-col h-full px-7 pt-16 pb-10 bg-white justify-between">
+      <div>
+        <button onclick="navBack()" class="pressable w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-8"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+        <h2 class="text-3xl font-black text-gray-900 mb-2">Enter OTP</h2>
+        <p class="text-gray-500 font-medium mb-8">Sent to <strong class="text-gray-900">+91 9999999999</strong></p>
+        <input id="otp-input" type="tel" class="w-full field text-4xl font-black text-center tracking-[0.5em]" maxlength="6" value="999999">
+        <p class="text-center text-sm text-indigo-600 font-bold mt-4">Resend in 28s</p>
+      </div>
+      <div class="space-y-3">
+        <p class="text-center text-xs text-gray-400 font-medium">Enter <strong>000000</strong> → New user · <strong>123456</strong> → Pending activation</p>
+        <button onclick="loginRoute()" class="pressable btn-indigo">Verify & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3: REGISTRATION (5 steps)
+  ══════════════════════════════════════ -->
+  <div id="s-register" class="screen">
+    <div class="flex flex-col h-full bg-white">
+      <!-- Progress -->
+      <div class="px-7 pt-14 pb-4">
+        <div id="reg-progress" class="flex gap-2 mb-6">
+          <div class="h-1 flex-1 rounded-full bg-indigo-600"></div>
+          <div id="rp2" class="h-1 flex-1 rounded-full bg-gray-200"></div>
+          <div id="rp3" class="h-1 flex-1 rounded-full bg-gray-200"></div>
+          <div id="rp4" class="h-1 flex-1 rounded-full bg-gray-200"></div>
+          <div id="rp5" class="h-1 flex-1 rounded-full bg-gray-200"></div>
+        </div>
+        <p id="reg-step-label" class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">Step 1 of 5</p>
+        <h2 id="reg-title" class="text-2xl font-black text-gray-900">About You</h2>
+      </div>
+      
+      <div class="scroll flex-1 px-7 pb-8">
+        <!-- Step 1: Basic -->
+        <div id="reg-s1" class="reg-step space-y-4 pt-2">
+          <div><label class="label">Full Name</label><input class="field" placeholder="Rohit Verma" value="Rohit Verma"></div>
+          <div><label class="label">Date of Birth</label><input type="date" class="field" value="1999-06-15"></div>
+          <div>
+            <label class="label">Gender</label>
+            <select class="field"><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select>
+          </div>
+          <div><label class="label">Profile Photo</label>
+            <button class="w-full border-2 border-dashed border-gray-200 rounded-2xl py-8 flex flex-col items-center gap-2 text-gray-400 pressable">
+              <i data-lucide="camera" class="w-7 h-7"></i>
+              <span class="font-semibold text-sm">Take or Upload Photo</span>
+            </button>
+          </div>
+        </div>
+        <!-- Step 2: About -->
+        <div id="reg-s2" class="reg-step space-y-4 pt-2 hidden">
+          <div><label class="label">Occupation</label><select class="field"><option>Student</option><option>Working Professional</option><option>Other</option></select></div>
+          <div><label class="label">College / Employer</label><input class="field" placeholder="e.g. Delhi University"></div>
+          <div><label class="label">Hometown</label><input class="field" placeholder="e.g. Lucknow"></div>
+          <div>
+            <label class="label">Food Preference</label>
+            <div class="flex gap-2 flex-wrap">
+              <button class="px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-bold pressable">Veg</button>
+              <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-bold pressable">Non-Veg</button>
+              <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-bold pressable">Egg</button>
+              <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-bold pressable">Vegan</button>
+            </div>
+          </div>
+          <div><label class="label">Email (Optional)</label><input type="email" class="field" placeholder="rohit@example.com"></div>
+        </div>
+        <!-- Step 3: Guardian -->
+        <div id="reg-s3" class="reg-step space-y-4 pt-2 hidden">
+          <div class="bg-amber-50 border border-amber-100 p-4 rounded-2xl">
+            <p class="text-sm font-bold text-amber-800">Your guardian will receive important updates about your stay via WhatsApp — payments, notices and safety alerts.</p>
+          </div>
+          <div><label class="label">Guardian Name</label><input class="field" placeholder="e.g. Suresh Verma"></div>
+          <div><label class="label">Relationship</label><select class="field"><option>Father</option><option>Mother</option><option>Sibling</option><option>Spouse</option><option>Other</option></select></div>
+          <div><label class="label">WhatsApp Number (+91)</label><input type="tel" class="field" placeholder="9888888888"></div>
+          <div>
+            <label class="label">Alert Scope</label>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4" checked><span class="font-semibold text-sm">Payments & Rent</span></label>
+              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4" checked><span class="font-semibold text-sm">Leaves (7+ days)</span></label>
+              <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4"><span class="font-semibold text-sm">Safety & SOS</span></label>
+            </div>
+          </div>
+        </div>
+        <!-- Step 4: Emergency Contact -->
+        <div id="reg-s4" class="reg-step space-y-4 pt-2 hidden">
+          <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl"><p class="text-sm font-bold text-blue-800">This person can be called in a medical or safety emergency at your PG.</p></div>
+          <div><label class="label">Contact Name</label><input class="field" placeholder="e.g. Priya Verma"></div>
+          <div><label class="label">Relationship</label><input class="field" placeholder="e.g. Sister"></div>
+          <div><label class="label">Phone Number</label><input type="tel" class="field" placeholder="9777777777"></div>
+          <div><label class="label">Address (Optional)</label><input class="field" placeholder="e.g. 14, MG Road, Jaipur"></div>
+        </div>
+        <!-- Step 5: Consent -->
+        <div id="reg-s5" class="reg-step space-y-5 pt-2 hidden">
+          <label class="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
+            <input type="checkbox" class="mt-1 w-5 h-5" id="tos-check">
+            <span class="text-sm font-medium text-gray-700">I agree to MyPG's <span class="text-indigo-600 font-bold">Terms of Service</span> and <span class="text-indigo-600 font-bold">Privacy Policy</span>.</span>
+          </label>
+          <label class="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
+            <input type="checkbox" class="mt-1 w-5 h-5">
+            <span class="text-sm font-medium text-gray-700">I consent to my PG owner seeing my profile, documents and payment status as explained in the Privacy Policy.</span>
+          </label>
+          <label class="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
+            <input type="checkbox" class="mt-1 w-5 h-5">
+            <span class="text-sm font-medium text-gray-500">Receive marketing communications (optional).</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="px-7 pb-8 bg-white border-t border-gray-100 pt-4 flex gap-3">
+        <button id="reg-back-btn" onclick="regStep(-1)" class="pressable btn-secondary flex-1" style="display:none">Back</button>
+        <button id="reg-next-btn" onclick="regStep(1)" class="pressable btn-indigo flex-1">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 4: PROSPECT HOME
+  ══════════════════════════════════════ -->
+  <div id="s-prospect" class="screen">
+    <div class="flex flex-col h-full">
+      <div class="glass header px-6 pt-14 pb-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-xl font-black text-gray-900">Hi, Rohit</h1>
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Find your PG</p>
+        </div>
+        <button class="pressable w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600"><i data-lucide="bell" class="w-5 h-5"></i></button>
+      </div>
+      <div class="scroll pb-8 px-5 pt-4">
+        <button onclick="navTo('s-join-pg')" class="pressable w-full card p-5 flex items-center gap-4 mb-3">
+          <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="qr-code" class="w-6 h-6"></i></div>
+          <div class="text-left">
+            <h3 class="font-bold text-gray-900">Join a PG</h3>
+            <p class="text-sm text-gray-500 font-medium">Enter code or scan a QR</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 ml-auto"></i>
+        </button>
+        <div class="card p-5 flex items-center gap-4 mb-6 opacity-50">
+          <div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="search" class="w-6 h-6"></i></div>
+          <div class="text-left"><h3 class="font-bold text-gray-700">Explore PGs Nearby</h3><p class="text-sm text-gray-400 font-medium">Coming soon — Phase 3</p></div>
+        </div>
+        <div class="bg-indigo-50 rounded-3xl p-6 text-center">
+          <h4 class="font-black text-gray-900 mb-1">How it works</h4>
+          <p class="text-sm text-gray-500 font-medium mb-4">Get a 6-digit code from your PG manager and tap Join a PG to be added to their platform.</p>
+          <div class="flex justify-around">
+            <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm"><i data-lucide="scan" class="w-5 h-5"></i></div><span class="text-xs font-bold text-gray-600">Scan Code</span></div>
+            <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm"><i data-lucide="file-check" class="w-5 h-5"></i></div><span class="text-xs font-bold text-gray-600">Request</span></div>
+            <div class="flex flex-col items-center gap-1"><div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm"><i data-lucide="home" class="w-5 h-5"></i></div><span class="text-xs font-bold text-gray-600">Move In</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 5: JOIN PG FLOW
+  ══════════════════════════════════════ -->
+  <div id="s-join-pg" class="screen">
+    <div class="flex flex-col h-full bg-white">
+      <div class="glass header px-6 pt-14 pb-4 flex items-center gap-4">
+        <button onclick="navBack()" class="pressable w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+        <h1 class="text-xl font-black text-gray-900">Join a PG</h1>
+      </div>
+      <div class="scroll px-6 pt-6 pb-8" id="join-code-view">
+        <!-- Enter Code -->
+        <div id="join-step-1">
+          <div class="border-2 border-dashed border-indigo-200 rounded-3xl p-8 mb-6 flex flex-col items-center gap-4 bg-indigo-50 pressable" onclick="navTo('s-join-qr-scan')">
+            <i data-lucide="scan-line" class="w-12 h-12 text-indigo-500"></i>
+            <span class="font-bold text-indigo-700">Scan QR Code</span>
+          </div>
+          <div class="flex items-center gap-4 mb-6"><div class="flex-1 h-px bg-gray-200"></div><span class="text-xs font-bold text-gray-400 uppercase">or enter code</span><div class="flex-1 h-px bg-gray-200"></div></div>
+          <label class="label">PG Code</label>
+          <input class="field text-2xl font-black text-center tracking-widest uppercase mb-6" placeholder="ABCD12" value="SUN001">
+          <button onclick="showJoinPreview()" class="pressable btn-indigo">Find This PG</button>
+        </div>
+        <!-- PG Preview -->
+        <div id="join-step-2" class="hidden">
+          <div class="card overflow-hidden mb-6">
+            <div class="h-40 bg-gradient-to-br from-indigo-400 to-purple-500 relative flex items-end p-4">
+              <div>
+                <h3 class="text-xl font-black text-white">Sunrise PG</h3>
+                <p class="text-sm text-indigo-100 font-medium">Koramangala, Bangalore</p>
+              </div>
+              <div class="absolute top-3 right-3 bg-white/20 backdrop-blur px-2 py-1 rounded-full"><span class="text-xs font-bold text-white">Verified</span></div>
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex justify-between text-sm"><span class="text-gray-500 font-medium">Gender Policy</span><span class="font-bold text-gray-900">Boys only</span></div>
+              <div class="flex justify-between text-sm"><span class="text-gray-500 font-medium">Food</span><span class="font-bold text-gray-900">Included</span></div>
+              <div class="flex justify-between text-sm"><span class="text-gray-500 font-medium">Availability</span><span class="chip chip-amber">Limited beds</span></div>
+            </div>
+          </div>
+          <label class="label">Room Type Preference</label>
+          <div class="grid grid-cols-2 gap-3 mb-5">
+            <button class="pressable p-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm">Single Room<br><span class="font-medium text-indigo-200">₹12,000/mo</span></button>
+            <button class="pressable p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-2xl font-bold text-sm">Double Sharing<br><span class="font-medium text-gray-400">₹8,500/mo</span></button>
+            <button class="pressable p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-2xl font-bold text-sm">Triple Sharing<br><span class="font-medium text-gray-400">₹6,000/mo</span></button>
+          </div>
+          <label class="label">Preferred Move-In Date</label>
+          <input type="date" class="field mb-4" value="2026-11-01">
+          <label class="label">Note to Owner (Optional)</label>
+          <textarea class="field h-20 resize-none mb-6" placeholder="Anything you'd like them to know…"></textarea>
+          <button onclick="showWaitlistConfirm()" class="pressable btn-primary">Send Join Request</button>
+        </div>
+        <!-- Waitlist Confirm -->
+        <div id="join-step-3" class="hidden text-center py-6">
+          <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="check-circle" class="w-10 h-10"></i></div>
+          <h3 class="text-2xl font-black text-gray-900 mb-2">Request Sent!</h3>
+          <p class="text-gray-500 font-medium mb-2">Sunrise PG will review your request.</p>
+          <div class="card p-4 text-left my-6">
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Current Status</p>
+            <div class="flex items-center gap-3"><div class="w-2 h-2 bg-amber-500 rounded-full"></div><span class="font-bold text-gray-900">Under Review</span></div>
+            <p class="text-sm text-gray-500 mt-1 font-medium">Expected response within 48 hours.</p>
+          </div>
+          <button onclick="navTo('s-prospect')" class="pressable btn-secondary">Back to Home</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 6: QR SCAN (Simulated)
+  ══════════════════════════════════════ -->
+  <div id="s-join-qr-scan" class="screen">
+    <div class="flex flex-col h-full bg-black">
+      <div class="px-6 pt-14 pb-4 flex items-center gap-4">
+        <button onclick="navBack()" class="pressable w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+        <h1 class="text-xl font-black text-white">Scan QR Code</h1>
+      </div>
+      <div class="flex-1 flex flex-col items-center justify-center px-10">
+        <div class="w-64 h-64 border-2 border-white/30 rounded-3xl relative flex items-center justify-center">
+          <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-2xl"></div>
+          <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-2xl"></div>
+          <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-2xl"></div>
+          <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-2xl"></div>
+          <div class="text-white/40 text-center"><i data-lucide="qr-code" class="w-16 h-16"></i></div>
+        </div>
+        <p class="text-white/60 font-medium text-sm mt-6 text-center">Point camera at the PG's QR code poster</p>
+      </div>
+      <div class="px-6 pb-12">
+        <button onclick="navBack(); showJoinPreview();" class="pressable btn-primary">Simulate Scan (Auto-fill)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 7: ACTIVATION WIZARD
+  ══════════════════════════════════════ -->
+  <div id="s-activation" class="screen">
+    <div class="flex flex-col h-full bg-white">
+      <div class="px-6 pt-14 pb-4 border-b border-gray-100">
+        <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">Almost there!</p>
+        <h1 class="text-2xl font-black text-gray-900">Activate your stay</h1>
+      </div>
+      <div class="scroll px-6 pt-5 pb-8">
+        <div class="card p-5 mb-4">
+          <div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 bg-green-500 rounded-full"></div><span class="font-bold text-green-700 text-sm">Approved by Sunrise PG</span></div>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-gray-500">Bed</span><span class="font-bold text-gray-900">204B, Tower A</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Monthly Rent</span><span class="font-bold text-gray-900">₹8,500</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Deposit</span><span class="font-bold text-gray-900">₹17,000</span></div>
+            <div class="flex justify-between"><span class="text-gray-500">Move-in</span><span class="font-bold text-gray-900">1 Nov 2026</span></div>
+          </div>
+        </div>
+        <div class="card p-5 mb-6">
+          <h3 class="font-bold text-gray-900 mb-3">Rental Agreement</h3>
+          <div class="bg-gray-50 rounded-xl p-4 h-24 flex items-center justify-center border border-gray-200 mb-3"><span class="text-gray-400 text-sm font-medium">[ Agreement Preview ]</span></div>
+          <label class="flex items-start gap-3"><input type="checkbox" class="mt-1 w-5 h-5"><span class="text-sm font-medium text-gray-700">I have read and agree to the rental agreement and house rules.</span></label>
+        </div>
+      </div>
+      <div class="px-6 pb-8 border-t border-gray-100 pt-4"><button onclick="navTo('s-main')" class="pressable btn-primary">Sign & Activate</button></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 8: MAIN DASHBOARD
+  ══════════════════════════════════════ -->
+  <div id="s-main" class="screen root">
+    <!-- Sticky Header -->
+    <div class="glass header px-5 pt-14 pb-3 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-black text-gray-900">Hi, Rohit</h2>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sunday, 14 Sep</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="openMiniSheet('sheet-inbox')" class="pressable w-9 h-9 bg-white border border-gray-200 rounded-full flex items-center justify-center relative shadow-sm">
+          <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+          <i data-lucide="bell" class="w-4 h-4 text-gray-600"></i>
+        </button>
+        <button onclick="openMiniSheet('sheet-sos')" class="pressable w-9 h-9 bg-red-50 border border-red-100 rounded-full flex items-center justify-center">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-red-600"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <!-- HOME TAB -->
+    <div id="tab-home" class="tab-section active scroll pb-nav px-5 pt-3">
+      <!-- Announcement -->
+      <div class="bg-amber-50 border border-amber-100 rounded-2xl p-3.5 flex gap-3 mb-4 items-start">
+        <i data-lucide="megaphone" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+        <div><p class="font-bold text-amber-900 text-sm">Water Maintenance Today</p><p class="text-xs text-amber-700 font-medium mt-0.5">Supply off 2–4 PM. Tank filling.</p></div>
+      </div>
+
+      <!-- Rent Card -->
+      <div class="rounded-3xl p-5 mb-5" style="background: linear-gradient(135deg, #1e293b, #0f172a); box-shadow: 0 12px 28px -6px rgba(15,23,42,0.45);">
+        <div class="flex justify-between items-start mb-4">
+          <div><p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Upcoming Rent</p><h3 class="text-3xl font-black text-white">₹8,500</h3></div>
+          <span class="px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-bold text-white">Oct 5th</span>
+        </div>
+        <div class="flex gap-3"><button class="pressable flex-1 py-3 bg-white text-gray-900 rounded-xl font-bold text-sm shadow-lg">Pay via UPI</button><button class="pressable flex-1 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm">Log Cash</button></div>
+      </div>
+
+      <!-- Room & Roommates — Open Card -->
+      <div class="card p-5 mb-5">
+        <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-100">
+          <div>
+            <h4 class="font-black text-gray-900 text-lg">Room 204B</h4>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-0.5">Double Sharing · Tower A · Sunrise PG</p>
+          </div>
+          <button onclick="openMiniSheet('sheet-wifi')" class="pressable w-9 h-9 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600"><i data-lucide="wifi" class="w-4 h-4"></i></button>
+        </div>
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Roommates</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center font-black text-gray-600">K</div>
+            <span class="font-bold text-gray-900">Karthik</span>
+          </div>
+          <button class="pressable px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-bold flex items-center gap-1.5"><i data-lucide="phone" class="w-3 h-3"></i> Call</button>
+        </div>
+      </div>
+
+      <!-- Quick Actions: Daily Use Only -->
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Quick Actions</p>
+      <div class="grid grid-cols-4 gap-3 mb-5">
+        <button onclick="openPageModal('page-food')" class="pressable flex flex-col items-center gap-2">
+          <div class="w-14 h-14 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-600"><i data-lucide="utensils" class="w-6 h-6"></i></div>
+          <span class="text-[10px] font-bold text-gray-600">Menu</span>
+        </button>
+        <button onclick="openPageModal('page-issues')" class="pressable flex flex-col items-center gap-2">
+          <div class="w-14 h-14 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-600"><i data-lucide="ticket" class="w-6 h-6"></i></div>
+          <span class="text-[10px] font-bold text-gray-600">Issues</span>
+        </button>
+        <button onclick="openPageModal('page-cleaning')" class="pressable flex flex-col items-center gap-2">
+          <div class="w-14 h-14 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-600"><i data-lucide="sparkles" class="w-6 h-6"></i></div>
+          <span class="text-[10px] font-bold text-gray-600">Clean</span>
+        </button>
+        <button onclick="openPageModal('page-parcels')" class="pressable flex flex-col items-center gap-2 relative">
+          <div class="absolute top-0 right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full z-10"></div>
+          <div class="w-14 h-14 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-600"><i data-lucide="package" class="w-6 h-6"></i></div>
+          <span class="text-[10px] font-bold text-gray-600">Parcels</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PAYMENTS TAB -->
+    <div id="tab-payments" class="tab-section scroll pb-nav px-5 pt-3">
+      <h2 class="text-2xl font-black text-gray-900 mb-5">Payments</h2>
+      <div class="card overflow-hidden mb-5" style="border-left: 4px solid #EF4444;">
+        <div class="p-5"><p class="text-xs font-bold text-red-500 uppercase mb-1">Overdue</p><h3 class="text-3xl font-black text-red-600 mb-1">₹2,500</h3><p class="text-sm text-gray-500 font-medium mb-4">Electricity bill · Sep</p><button class="pressable btn-indigo" style="padding: 12px">Pay Now</button></div>
+      </div>
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">History</p>
+      <div class="card overflow-hidden">
+        <div class="list-row"><div class="flex items-center gap-3"><div class="w-9 h-9 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div><div><p class="font-bold text-sm text-gray-900">Sep Rent</p><p class="text-xs text-gray-400 font-medium">Paid 4 Sep</p></div></div><div class="flex items-center gap-2"><span class="font-bold text-gray-900">₹8,500</span><i data-lucide="download" class="w-4 h-4 text-indigo-500"></i></div></div>
+        <div class="list-row"><div class="flex items-center gap-3"><div class="w-9 h-9 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check" class="w-4 h-4"></i></div><div><p class="font-bold text-sm text-gray-900">Security Deposit</p><p class="text-xs text-gray-400 font-medium">Paid 1 Aug</p></div></div><div class="flex items-center gap-2"><span class="font-bold text-gray-900">₹17,000</span><i data-lucide="download" class="w-4 h-4 text-indigo-500"></i></div></div>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="tab-profile" class="tab-section scroll pb-nav px-5 pt-3">
+      <!-- Profile Card -->
+      <div class="card p-5 flex items-center gap-4 mb-6">
+        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center font-black text-indigo-600 text-2xl">R</div>
+        <div class="flex-1">
+          <h3 class="text-lg font-black text-gray-900">Rohit Verma</h3>
+          <p class="text-sm text-gray-500 font-medium">+91 9999999999</p>
+          <span class="chip chip-green mt-1">Active Tenant</span>
+        </div>
+        <button onclick="openPageModal('page-edit-profile')" class="pressable w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center text-gray-600"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+      </div>
+
+      <!-- Hostel-specific -->
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">Sunrise PG</p>
+      <div class="card overflow-hidden mb-5">
+        <div class="list-row" onclick="openPageModal('page-pg-info')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="info" class="w-4 h-4 text-gray-400"></i> Amenities & House Rules</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+        <div class="list-row" onclick="openPageModal('page-docs')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="file-check" class="w-4 h-4 text-gray-400"></i> Agreement & Documents</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+        <div class="list-row" onclick="openPageModal('page-leave')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="plane" class="w-4 h-4 text-gray-400"></i> Declare Leave</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+        <div class="list-row" onclick="openPageModal('page-moveout')"><div class="flex items-center gap-3 font-bold text-red-600 text-sm"><i data-lucide="log-out" class="w-4 h-4 text-red-400"></i> Request Move Out</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+      </div>
+
+      <!-- App & Account -->
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">App & Account</p>
+      <div class="card overflow-hidden mb-6">
+        <div class="list-row" onclick="openPageModal('page-stay-history')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="history" class="w-4 h-4 text-gray-400"></i> My Stay History</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+        <div class="list-row" onclick="openMiniSheet('sheet-refer')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="gift" class="w-4 h-4 text-gray-400"></i> Refer & Earn</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+        <div class="list-row" onclick="openPageModal('page-help')"><div class="flex items-center gap-3 font-bold text-gray-800 text-sm"><i data-lucide="help-circle" class="w-4 h-4 text-gray-400"></i> Help & FAQs</div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>
+      </div>
+      <button onclick="navTo('s-login')" class="pressable btn-secondary">Log Out</button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <button id="nav-home" onclick="switchTab('home')" class="nav-item active pressable">
+        <i data-lucide="home" class="w-5 h-5"></i><span>Home</span>
+      </button>
+      <button id="nav-payments" onclick="switchTab('payments')" class="nav-item pressable">
+        <i data-lucide="credit-card" class="w-5 h-5"></i><span>Payments</span>
+      </button>
+      <button id="nav-profile" onclick="switchTab('profile')" class="nav-item pressable">
+        <i data-lucide="user" class="w-5 h-5"></i><span>Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGE MODALS (Full-screen, back button)
+  ══════════════════════════════════════ -->
+
+  <!-- FOOD PAGE -->
+  <div id="page-food" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-food')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Food Menu</h2>
+    </div>
+    <div class="px-5 pt-4 pb-2">
+      <!-- Day picker -->
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+        <button class="menu-day-btn active-day shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-indigo-600 text-white">
+          <span class="text-[10px] font-bold uppercase">Mon</span><span class="text-sm font-black">14</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-gray-100 text-gray-500">
+          <span class="text-[10px] font-bold uppercase">Tue</span><span class="text-sm font-black">15</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-gray-100 text-gray-500">
+          <span class="text-[10px] font-bold uppercase">Wed</span><span class="text-sm font-black">16</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-gray-100 text-gray-500">
+          <span class="text-[10px] font-bold uppercase">Thu</span><span class="text-sm font-black">17</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-gray-100 text-gray-500">
+          <span class="text-[10px] font-bold uppercase">Fri</span><span class="text-sm font-black">18</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-gray-100 text-gray-500">
+          <span class="text-[10px] font-bold uppercase">Sat</span><span class="text-sm font-black">19</span>
+        </button>
+        <button class="menu-day-btn shrink-0 flex flex-col items-center w-12 py-2 rounded-xl bg-orange-50 text-orange-700 border border-orange-200">
+          <span class="text-[10px] font-bold uppercase">Sun</span><span class="text-sm font-black">20</span><span class="text-[8px] font-bold">Leave</span>
+        </button>
+      </div>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8">
+      <div class="card overflow-hidden mb-4">
+        <div class="p-4 border-b border-gray-100">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-black text-gray-900">Lunch <span class="text-xs text-gray-400 font-medium ml-1">12:30 PM</span></h4>
+            <span class="chip chip-gray flex items-center gap-1"><i data-lucide="lock" class="w-2.5 h-2.5"></i> Locked</span>
+          </div>
+          <p class="text-sm text-gray-500 font-medium mb-3">Paneer Butter Masala · Dal Fry · Roti · Rice · Salad</p>
+          <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
+            <span class="text-sm font-bold text-green-700">Opted In</span>
+            <div class="w-10 h-5 bg-green-500 rounded-full relative opacity-60"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div></div>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-2">
+            <h4 class="font-black text-gray-900">Dinner <span class="text-xs text-gray-400 font-medium ml-1">8:00 PM</span></h4>
+            <span class="text-indigo-600 text-xs font-bold flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Locks in 4h</span>
+          </div>
+          <p class="text-sm text-gray-500 font-medium mb-3">Aloo Gobi · Dal Tadka · Rice · Gulab Jamun</p>
+          <div class="flex items-center justify-between p-3 bg-green-50 rounded-xl border border-green-100">
+            <span class="text-sm font-bold text-green-700">Opted In</span>
+            <div class="pressable w-10 h-5 bg-green-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Sunday — On Leave example -->
+      <div class="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex gap-3 items-start">
+        <i data-lucide="plane" class="w-5 h-5 text-orange-500 shrink-0 mt-0.5"></i>
+        <div>
+          <p class="font-bold text-orange-900 text-sm">You are on leave on Sunday (20 Sep)</p>
+          <p class="text-xs text-orange-700 font-medium mt-1">Meals are automatically paused on leave days. No action needed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ISSUES PAGE -->
+  <div id="page-issues" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="closePageModal('page-issues'); resetIssueView();" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+        <h2 class="text-lg font-black text-gray-900" id="issue-page-title">Issues</h2>
+      </div>
+      <button id="raise-issue-btn" onclick="showIssueForm()" class="pressable flex items-center gap-1.5 bg-gray-900 text-white px-3 py-2 rounded-xl font-bold text-sm">
+        <i data-lucide="plus" class="w-4 h-4"></i> New
+      </button>
+    </div>
+
+    <!-- Issue List View -->
+    <div id="issue-list-view" class="flex flex-col flex-1 overflow-hidden">
+      <div class="px-5 pt-4 pb-2">
+        <div class="tab-bar"><div class="tab-pill active" onclick="switchIssueTab('open', this)">Open</div><div class="tab-pill" onclick="switchIssueTab('closed', this)">Closed</div></div>
+      </div>
+      <div class="scroll px-5 pt-3 pb-8">
+        <div id="issue-tab-open" class="space-y-3">
+          <div class="card p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2"><div class="w-7 h-7 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4"></i></div><span class="font-bold text-gray-900">AC not cooling</span></div>
+              <span class="chip chip-blue">In Progress</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium mb-2">Electrical · Room 204B · Raised 2 days ago</p>
+            <p class="text-xs font-bold text-gray-700 bg-gray-50 border border-gray-100 p-2 rounded-lg">Assigned to Ravi. Visiting at 4 PM today.</p>
+          </div>
+          <div class="card p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2"><div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center"><i data-lucide="wifi" class="w-4 h-4"></i></div><span class="font-bold text-gray-900">WiFi slow in room</span></div>
+              <span class="chip chip-amber">Waiting</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium">WiFi · Room 204B · Raised today</p>
+          </div>
+        </div>
+        <div id="issue-tab-closed" class="space-y-3 hidden">
+          <div class="card p-4 opacity-75">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2"><div class="w-7 h-7 bg-gray-100 text-gray-500 rounded-lg flex items-center justify-center"><i data-lucide="droplets" class="w-4 h-4"></i></div><span class="font-bold text-gray-900">Leaking tap</span></div>
+              <span class="chip chip-green">Closed</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium mb-2">Plumbing · Bathroom · Closed 5 days ago</p>
+            <p class="text-xs text-gray-700 font-medium">Resolved: Tap replaced by plumber Suresh.</p>
+          </div>
+          <div class="card p-4 opacity-75">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2"><div class="w-7 h-7 bg-gray-100 text-gray-500 rounded-lg flex items-center justify-center"><i data-lucide="sofa" class="w-4 h-4"></i></div><span class="font-bold text-gray-900">Chair broken</span></div>
+              <span class="chip chip-green">Closed</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium">Furniture · Room 204B · Closed 12 days ago</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Issue Form View -->
+    <div id="issue-form-view" class="flex-col flex-1 overflow-hidden hidden">
+      <div class="scroll px-5 pt-4 pb-8 space-y-4">
+        <div>
+          <label class="label">Category</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button class="pressable p-3 bg-indigo-600 text-white rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="zap" class="w-4 h-4"></i>Electrical</button>
+            <button class="pressable p-3 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="droplets" class="w-4 h-4"></i>Plumbing</button>
+            <button class="pressable p-3 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="wifi" class="w-4 h-4"></i>WiFi</button>
+            <button class="pressable p-3 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="sparkles" class="w-4 h-4"></i>Cleaning</button>
+            <button class="pressable p-3 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="sofa" class="w-4 h-4"></i>Furniture</button>
+            <button class="pressable p-3 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold flex flex-col items-center gap-1"><i data-lucide="more-horizontal" class="w-4 h-4"></i>Other</button>
+          </div>
+        </div>
+        <div><label class="label">Location</label><select class="field"><option>My Room (204B)</option><option>Bathroom</option><option>Common Area</option></select></div>
+        <div><label class="label">Description</label><textarea class="field h-24 resize-none" placeholder="Describe the issue in detail…"></textarea></div>
+        <div>
+          <label class="label">Photos (Optional)</label>
+          <button class="w-full border-2 border-dashed border-gray-200 rounded-2xl py-6 flex flex-col items-center gap-2 text-gray-400 pressable bg-gray-50">
+            <i data-lucide="camera" class="w-6 h-6"></i><span class="text-sm font-semibold">Add Photos (up to 4)</span>
+          </button>
+        </div>
+        <label class="flex items-center gap-3"><input type="checkbox" class="w-4 h-4" checked><span class="text-sm font-medium text-gray-700">OK to enter my room when I'm away</span></label>
+        <div class="flex gap-3 pt-2">
+          <button onclick="hideIssueForm()" class="pressable btn-secondary flex-1">Cancel</button>
+          <button onclick="hideIssueForm()" class="pressable btn-indigo flex-1">Submit Issue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEANING PAGE -->
+  <div id="page-cleaning" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="closePageModal('page-cleaning')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+        <h2 class="text-lg font-black text-gray-900">Room Cleaning</h2>
+      </div>
+      <button class="pressable flex items-center gap-1.5 bg-gray-900 text-white px-3 py-2 rounded-xl font-bold text-sm"><i data-lucide="plus" class="w-4 h-4"></i> Request</button>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-4">
+      <div class="card p-4">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Upcoming</p>
+        <h4 class="font-black text-gray-900 text-lg mb-1">Tomorrow, 10 AM</h4>
+        <p class="text-sm text-gray-500 font-medium mb-3">Regular clean · Room 204B</p>
+        <button class="pressable btn-secondary" style="padding: 10px; font-size: 13px;">Skip This Time</button>
+      </div>
+      <div class="mb-1"><div class="tab-bar"><div class="tab-pill active" onclick="switchCleanTab('history', this)">History</div></div></div>
+      <div class="space-y-3" id="clean-history">
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-sm">13 Sep, 10 AM</span><span class="chip chip-green">Done</span></div>
+          <p class="text-xs text-gray-500 font-medium">Regular clean · Cleaner: Meena</p>
+        </div>
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-sm">11 Sep, 10 AM</span><span class="chip chip-amber">Skipped by you</span></div>
+          <p class="text-xs text-gray-500 font-medium">You marked "Do not disturb"</p>
+        </div>
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-sm">9 Sep, 10 AM</span><span class="chip chip-red">Missed</span></div>
+          <p class="text-xs text-gray-500 font-medium text-red-600">Cleaner didn't show. Auto-rescheduled.</p>
+        </div>
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-sm">7 Sep, 10 AM</span><span class="chip chip-green">Done</span></div>
+          <p class="text-xs text-gray-500 font-medium">Regular clean · Cleaner: Meena</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARCELS PAGE -->
+  <div id="page-parcels" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-parcels')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Parcels</h2>
+    </div>
+    <div class="px-5 pt-4 pb-2">
+      <div class="tab-bar"><div class="tab-pill active" onclick="switchParcelTab('awaiting', this)">Awaiting Pickup</div><div class="tab-pill" onclick="switchParcelTab('collected', this)">Collected</div></div>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8">
+      <div id="parcel-tab-awaiting" class="space-y-4">
+        <div class="card overflow-hidden">
+          <div class="h-28 relative"><img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80" class="w-full h-full object-cover opacity-80"><div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div><div class="absolute bottom-3 left-4 text-white font-black drop-shadow">Amazon</div></div>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-1"><h4 class="font-bold text-gray-900">Received at Reception</h4><span class="w-2 h-2 bg-red-500 rounded-full mt-1"></span></div>
+            <p class="text-xs text-gray-500 font-medium mb-3">Today, 2:15 PM · Guard: Ram</p>
+            <button id="collect-btn" onclick="collectParcel()" class="pressable btn-indigo" style="padding: 12px;">Mark as Collected</button>
+          </div>
+        </div>
+      </div>
+      <div id="parcel-tab-collected" class="space-y-3 hidden">
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><h4 class="font-bold text-gray-900">Myntra</h4><span class="chip chip-green">Collected</span></div>
+          <p class="text-xs text-gray-500 font-medium">Collected 10 Sep, 6:30 PM · Received 10 Sep, 3 PM</p>
+        </div>
+        <div class="card p-4">
+          <div class="flex justify-between items-center mb-1"><h4 class="font-bold text-gray-900">Flipkart</h4><span class="chip chip-green">Collected</span></div>
+          <p class="text-xs text-gray-500 font-medium">Collected 5 Sep, 8 PM · Received 5 Sep, 1 PM</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE PAGE -->
+  <div id="page-edit-profile" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <button onclick="closePageModal('page-edit-profile')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+        <h2 class="text-lg font-black text-gray-900">Edit Profile</h2>
+      </div>
+      <button onclick="closePageModal('page-edit-profile')" class="pressable text-indigo-600 font-bold text-sm">Save</button>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-4">
+      <div class="flex flex-col items-center mb-2">
+        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-black text-3xl mb-3">R</div>
+        <button class="pressable text-indigo-600 font-bold text-sm">Change Photo</button>
+      </div>
+      <div><label class="label">Full Name</label><input class="field" value="Rohit Verma"></div>
+      <div><label class="label">Date of Birth</label><input type="date" class="field" value="1999-06-15"></div>
+      <div><label class="label">Gender</label><select class="field"><option>Male</option><option>Female</option></select></div>
+      <div><label class="label">Occupation</label><select class="field"><option>Student</option><option>Working Professional</option></select></div>
+      <div><label class="label">College / Employer</label><input class="field" value="Delhi University"></div>
+      <div><label class="label">Hometown</label><input class="field" value="Jaipur"></div>
+      <div><label class="label">Email (Optional)</label><input type="email" class="field" value="rohit@example.com"></div>
+      <div class="divider my-4"></div>
+      <h4 class="font-black text-gray-900">Guardian Details</h4>
+      <div><label class="label">Guardian Name</label><input class="field" value="Suresh Verma"></div>
+      <div><label class="label">Relationship</label><select class="field"><option>Father</option><option>Mother</option></select></div>
+      <div><label class="label">WhatsApp Number</label><input type="tel" class="field" value="9888888888"></div>
+    </div>
+  </div>
+
+  <!-- LEAVE PAGE -->
+  <div id="page-leave" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-leave')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Declare Leave</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-4">
+      <!-- Big disclaimer -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+        <div class="flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+          <div>
+            <h4 class="font-black text-amber-900 mb-1">Meals are auto-paused on leave days</h4>
+            <p class="text-sm text-amber-800 font-medium">You <strong>don't need to manually skip meals</strong>. The system automatically marks you as unavailable for food on all declared leave days. This helps the kitchen plan accurately.</p>
+          </div>
+        </div>
+      </div>
+      <div><label class="label">Start Date</label><input type="date" class="field"></div>
+      <div><label class="label">End Date</label><input type="date" class="field"></div>
+      <div><label class="label">Reason (Optional)</label><select class="field"><option>Going Home</option><option>Travel / Trip</option><option>Medical</option><option>Other</option></select></div>
+      <div><label class="label">Note to Manager (Optional)</label><textarea class="field h-20 resize-none" placeholder="Any context you'd like to share…"></textarea></div>
+      <button onclick="closePageModal('page-leave')" class="pressable btn-primary">Submit Leave</button>
+    </div>
+  </div>
+
+  <!-- STAY HISTORY PAGE -->
+  <div id="page-stay-history" class="page-modal" id="page-stay-history">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-stay-history')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Stay History</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8">
+      <p class="text-xs text-gray-400 font-medium mb-5">Your private record — never shared with any PG or owner.</p>
+      <!-- Current Stay -->
+      <div class="card p-4 mb-3 border-l-4 border-l-indigo-500">
+        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-gray-900">Sunrise PG</h4><span class="chip chip-blue">Current</span></div>
+        <p class="text-sm text-gray-500 font-medium">Koramangala, Bangalore</p>
+        <p class="text-xs text-gray-400 mt-1">Move-in: Aug 2026 · Room 204B</p>
+      </div>
+      <!-- Past Stay (clickable) -->
+      <div onclick="openPageModal('page-past-hostel')" class="pressable card p-4 mb-3">
+        <div class="flex justify-between items-start mb-2"><h4 class="font-bold text-gray-900">Green Valley PG</h4><span class="chip chip-gray">Past Stay</span></div>
+        <p class="text-sm text-gray-500 font-medium">HSR Layout, Bangalore</p>
+        <p class="text-xs text-gray-400 mt-1">Mar 2025 – Jul 2026 · 16 months</p>
+        <div class="flex items-center gap-1 mt-2">
+          <span class="text-amber-400 text-sm">★★★★</span><span class="text-gray-300 text-sm">★</span>
+          <span class="text-xs text-gray-400 font-medium ml-1">4.0 · Your rating</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAST HOSTEL DETAIL PAGE -->
+  <div id="page-past-hostel" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-past-hostel')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Green Valley PG</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-4">
+      <div class="h-40 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-3xl flex items-end p-4">
+        <div><h3 class="text-xl font-black text-white">Green Valley PG</h3><p class="text-sm text-teal-100">HSR Layout, Bangalore</p></div>
+      </div>
+      <div class="card p-4 space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-500">Your Room</span><span class="font-bold text-gray-900">102A · Single Room</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Stay Period</span><span class="font-bold text-gray-900">Mar 2025 – Jul 2026</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Monthly Rent</span><span class="font-bold text-gray-900">₹9,500</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Exit Type</span><span class="chip chip-green">Smooth Exit</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Deposit Returned</span><span class="font-bold text-gray-900">₹15,000</span></div>
+      </div>
+      <div class="card p-4 space-y-2 text-sm">
+        <h4 class="font-bold text-gray-900 text-base mb-1">Manager Contact</h4>
+        <div class="flex justify-between"><span class="text-gray-500">Name</span><span class="font-bold text-gray-900">Mr. Ramesh K.</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Phone</span><span class="font-bold text-indigo-600">+91 987••••890</span></div>
+        <button class="pressable btn-secondary mt-2" style="padding: 10px; font-size: 13px;">Contact Manager</button>
+      </div>
+      <!-- Rating section -->
+      <div class="card p-5" id="rating-section">
+        <h4 class="font-black text-gray-900 mb-1">Your Rating</h4>
+        <p class="text-sm text-gray-500 font-medium mb-4">How was your stay at Green Valley PG?</p>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Overall Experience</p>
+            <div class="flex gap-2" id="stars-overall">
+              <span class="star active" onclick="setStars('overall', 1)">★</span><span class="star active" onclick="setStars('overall', 2)">★</span><span class="star active" onclick="setStars('overall', 3)">★</span><span class="star active" onclick="setStars('overall', 4)">★</span><span class="star" onclick="setStars('overall', 5)">★</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Food Quality</p>
+            <div class="flex gap-2" id="stars-food">
+              <span class="star active" onclick="setStars('food', 1)">★</span><span class="star active" onclick="setStars('food', 2)">★</span><span class="star active" onclick="setStars('food', 3)">★</span><span class="star" onclick="setStars('food', 4)">★</span><span class="star" onclick="setStars('food', 5)">★</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-gray-500 uppercase mb-2">Cleanliness & Maintenance</p>
+            <div class="flex gap-2" id="stars-clean">
+              <span class="star active" onclick="setStars('clean', 1)">★</span><span class="star active" onclick="setStars('clean', 2)">★</span><span class="star active" onclick="setStars('clean', 3)">★</span><span class="star active" onclick="setStars('clean', 4)">★</span><span class="star active" onclick="setStars('clean', 5)">★</span>
+            </div>
+          </div>
+        </div>
+        <textarea class="field h-20 resize-none mt-4" placeholder="Anything you'd like to add?"></textarea>
+        <button onclick="submitRating()" class="pressable btn-indigo mt-4">Submit Rating</button>
+      </div>
+      <div id="rating-done" class="card p-5 text-center hidden">
+        <i data-lucide="check-circle" class="w-10 h-10 text-green-500 mx-auto mb-2"></i>
+        <h4 class="font-black text-gray-900">Rating Submitted</h4>
+        <p class="text-sm text-gray-500 font-medium mt-1">Thanks for your feedback!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT PG PAGE -->
+  <div id="page-pg-info" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-pg-info')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">About Sunrise PG</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-5">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card p-4 flex flex-col items-center gap-2 text-center"><i data-lucide="wifi" class="text-indigo-600 w-6 h-6"></i><span class="text-xs font-bold text-gray-700">High-Speed WiFi</span></div>
+        <div class="card p-4 flex flex-col items-center gap-2 text-center"><i data-lucide="wind" class="text-indigo-600 w-6 h-6"></i><span class="text-xs font-bold text-gray-700">Air Conditioning</span></div>
+        <div class="card p-4 flex flex-col items-center gap-2 text-center"><i data-lucide="zap" class="text-indigo-600 w-6 h-6"></i><span class="text-xs font-bold text-gray-700">Power Backup</span></div>
+        <div class="card p-4 flex flex-col items-center gap-2 text-center"><i data-lucide="dumbbell" class="text-indigo-600 w-6 h-6"></i><span class="text-xs font-bold text-gray-700">Gym</span></div>
+      </div>
+      <div class="card overflow-hidden">
+        <div class="p-4 border-b border-gray-100"><h4 class="font-black text-gray-900">House Rules</h4></div>
+        <div class="p-4 space-y-3">
+          <div class="flex items-start gap-3"><i data-lucide="clock" class="w-4 h-4 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-sm text-gray-900">Curfew: 11:30 PM</p><p class="text-xs text-gray-500">Main gate locked at night</p></div></div>
+          <div class="flex items-start gap-3"><i data-lucide="ban" class="w-4 h-4 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-sm text-gray-900">No Smoking / Alcohol</p><p class="text-xs text-gray-500">Strictly prohibited on premises</p></div></div>
+          <div class="flex items-start gap-3"><i data-lucide="users" class="w-4 h-4 text-red-500 shrink-0 mt-0.5"></i><div><p class="font-bold text-sm text-gray-900">No Outside Guests</p><p class="text-xs text-gray-500">Guests in lobby area only</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS PAGE -->
+  <div id="page-docs" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-docs')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Documents</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-3">
+      <div class="card p-4 flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Aadhaar Card</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Verified</p></div><button class="pressable w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 text-gray-600"></i></button></div>
+      <div class="card p-4 flex justify-between items-center"><div><h4 class="font-bold text-gray-900">Rental Agreement</h4><p class="text-xs text-green-600 font-bold uppercase mt-1">Signed</p></div><button class="pressable w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 text-gray-600"></i></button></div>
+    </div>
+  </div>
+
+  <!-- HELP PAGE -->
+  <div id="page-help" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-help')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-gray-900">Help & FAQs</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-3">
+      <div class="card p-4"><h4 class="font-bold text-gray-900 mb-1">What is the move-out policy?</h4><p class="text-sm text-gray-500 font-medium">You must provide a 30-day notice via the app. Security deposit is settled after room inspection.</p></div>
+      <div class="card p-4"><h4 class="font-bold text-gray-900 mb-1">How are meals auto-paused on leave?</h4><p class="text-sm text-gray-500 font-medium">Once you declare leave dates, the system automatically opts you out of meals for those days. You don't need to toggle anything manually.</p></div>
+      <div class="card p-4"><h4 class="font-bold text-gray-900 mb-1">Can guests visit my room?</h4><p class="text-sm text-gray-500 font-medium">Guests are only allowed in the lobby area during daytime hours.</p></div>
+      <div class="card p-4"><h4 class="font-bold text-gray-900 mb-1">How do I get a receipt for HRA?</h4><p class="text-sm text-gray-500 font-medium">Go to Payments → History → tap any payment → Download Receipt. If your PG has enabled HRA statements, you'll also see a "Generate HRA Statement" option.</p></div>
+    </div>
+  </div>
+
+  <!-- MOVE OUT PAGE -->
+  <div id="page-moveout" class="page-modal">
+    <div class="glass header px-5 pt-14 pb-4 flex items-center gap-4">
+      <button onclick="closePageModal('page-moveout')" class="pressable w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center"><i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i></button>
+      <h2 class="text-lg font-black text-red-600">Request Move Out</h2>
+    </div>
+    <div class="scroll px-5 pt-4 pb-8 space-y-4">
+      <div class="bg-red-50 border border-red-100 rounded-2xl p-4"><p class="text-sm font-bold text-red-800">⚠ 30 days notice required to avoid penalties. Your security deposit settlement will begin after room inspection on exit day.</p></div>
+      <div><label class="label">Target Exit Date</label><input type="date" class="field"></div>
+      <div><label class="label">Reason</label><select class="field"><option>Relocating city</option><option>Job change</option><option>Personal reasons</option><option>Other</option></select></div>
+      <button onclick="closePageModal('page-moveout')" class="pressable w-full py-4 bg-red-600 text-white rounded-2xl font-bold text-base shadow-lg shadow-red-200">Initiate Exit Process</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       MINI SHEETS (for small confirmations)
+  ══════════════════════════════════════ -->
+  <div id="sheet-overlay-el" class="sheet-overlay" onclick="closeMiniSheet()"></div>
+
+  <div id="sheet-inbox" class="mini-sheet p-5 pb-8">
+    <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5"></div>
+    <h3 class="font-black text-gray-900 text-lg mb-4">Inbox</h3>
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl"><p class="text-xs font-bold text-red-500 uppercase mb-1">Urgent</p><h4 class="font-bold text-gray-900">Power Outage Tomorrow</h4><p class="text-sm text-gray-600 mt-1">Maintenance from 2 PM – 5 PM.</p></div>
+  </div>
+
+  <div id="sheet-sos" class="mini-sheet" style="background: #DC2626; max-height: 90%; border-radius: 28px 28px 0 0;">
+    <div class="w-10 h-1 bg-red-400 rounded-full mx-auto mt-4 mb-4"></div>
+    <div class="flex flex-col items-center justify-center px-6 text-center pb-10 pt-4">
+      <div class="relative w-44 h-44 flex items-center justify-center mb-8">
+        <div class="absolute inset-0 bg-red-500 rounded-full sos-ring"></div>
+        <button class="pressable w-36 h-36 bg-white text-red-600 rounded-full flex items-center justify-center shadow-2xl z-10 border-8 border-red-500"><span class="font-black text-4xl">SOS</span></button>
+      </div>
+      <p class="text-red-100 font-medium mb-6">Press to alert Manager, Security & Guardian instantly.</p>
+      <button class="pressable w-full py-4 bg-red-900 text-white rounded-2xl font-bold border border-red-500 flex justify-center items-center gap-2"><i data-lucide="phone" class="w-5 h-5"></i> Call 112</button>
+    </div>
+  </div>
+
+  <div id="sheet-wifi" class="mini-sheet p-5 pb-8">
+    <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5"></div>
+    <h3 class="font-black text-gray-900 text-lg mb-4">WiFi Details</h3>
+    <div class="space-y-3 mb-4">
+      <div class="flex justify-between p-3 bg-gray-50 rounded-xl"><span class="text-gray-500 font-bold text-sm">Network</span><span class="font-black text-gray-900">Sunrise_5G</span></div>
+      <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl"><span class="text-gray-500 font-bold text-sm">Password</span><span class="font-black text-gray-900 tracking-widest">••••••••</span></div>
+    </div>
+    <button class="pressable btn-primary flex items-center justify-center gap-2"><i data-lucide="copy" class="w-4 h-4"></i> Copy Password</button>
+  </div>
+
+  <div id="sheet-refer" class="mini-sheet p-5 pb-8">
+    <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-5"></div>
+    <h3 class="font-black text-gray-900 text-lg mb-1">Refer & Earn</h3>
+    <p class="text-gray-500 text-sm font-medium mb-4">Share code. Friend joins → Both get ₹500 off rent.</p>
+    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl text-center mb-4"><p class="text-xs font-bold text-gray-500 uppercase mb-1">Your Code</p><h4 class="text-3xl font-black text-indigo-600 tracking-widest">ROHIT500</h4></div>
+    <button class="pressable btn-primary" style="background: #25D366;">Share via WhatsApp</button>
+  </div>
+
+</div><!-- end device -->
+
+<script>
+  lucide.createIcons();
+  
+  let regCurrentStep = 1;
+  let navStack = [];
+
+  // ── Navigation ──────────────────────────────────
+  function navTo(id) {
+    const current = navStack.length ? document.getElementById(navStack[navStack.length-1]) : null;
+    if (current) { current.classList.remove('active'); current.classList.add('behind'); }
+    navStack.push(id);
+    const next = document.getElementById(id);
+    next.classList.remove('behind');
+    next.classList.add('active');
     lucide.createIcons();
-    
-    let activeSheet = null;
-    let navStack = ['screen-login'];
+  }
 
-    function navTo(screenId) {
-      const current = document.getElementById(navStack[navStack.length - 1]);
-      const next = document.getElementById(screenId);
-      current.classList.remove('active');
-      current.classList.add('exit-left');
-      next.classList.remove('exit-left');
-      next.classList.add('active');
-      navStack.push(screenId);
-    }
+  function navBack() {
+    if (navStack.length <= 1) return;
+    const currentId = navStack.pop();
+    const current = document.getElementById(currentId);
+    current.classList.remove('active');
+    current.classList.add('behind');
+    setTimeout(() => current.classList.remove('behind'), 400);
+    const prev = navStack.length ? document.getElementById(navStack[navStack.length-1]) : null;
+    if (prev) { prev.classList.remove('behind'); prev.classList.add('active'); }
+  }
 
-    function navBack() {
-      if (navStack.length <= 1) return;
-      const current = document.getElementById(navStack.pop());
-      const prev = document.getElementById(navStack[navStack.length - 1]);
-      current.classList.remove('active');
-      prev.classList.remove('exit-left');
-      prev.classList.add('active');
-    }
+  // ── Page Modals ─────────────────────────────────
+  function openPageModal(id) {
+    document.getElementById(id).classList.add('active');
+    lucide.createIcons();
+  }
+  function closePageModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
 
-    function login() {
-      const btn = document.querySelector('#screen-otp button');
-      const otp = document.getElementById('login-otp').value;
-      btn.innerHTML = 'Verifying...';
-      
-      setTimeout(() => {
-        btn.innerHTML = 'Verify & Login';
-        if (otp === '000000') { navTo('screen-prospect'); } 
-        else if (otp === '123456') { navTo('screen-activation'); } 
-        else { navTo('screen-main'); switchTab('home'); }
-      }, 600);
-    }
+  // ── Mini Sheets ─────────────────────────────────
+  function openMiniSheet(id) {
+    closeMiniSheet();
+    document.getElementById('sheet-overlay-el').classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+  function closeMiniSheet() {
+    document.getElementById('sheet-overlay-el').classList.remove('active');
+    document.querySelectorAll('.mini-sheet').forEach(s => s.classList.remove('active'));
+  }
 
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => {
-        el.classList.remove('text-indigo-600');
-        el.classList.add('text-gray-400');
-      });
-      document.getElementById('tab-' + tabName).classList.add('active');
-      const activeBtn = document.getElementById('nav-btn-' + tabName);
-      activeBtn.classList.remove('text-gray-400');
-      activeBtn.classList.add('text-indigo-600');
-    }
+  // ── Login Route ─────────────────────────────────
+  function loginRoute() {
+    const otp = document.getElementById('otp-input').value;
+    if (otp === '000000') { navTo('s-register'); }
+    else if (otp === '123456') { navTo('s-activation'); }
+    else { navTo('s-main'); }
+  }
 
-    function openSheet(sheetId) {
-      closeSheet();
-      activeSheet = document.getElementById(sheetId);
-      const overlay = document.getElementById('sheet-overlay');
-      overlay.classList.add('active');
-      activeSheet.classList.add('active');
+  // ── Registration Steps ──────────────────────────
+  const regTitles = ['About You', 'Lifestyle & Preferences', 'Guardian Details', 'Emergency Contact', 'Consent & Privacy'];
+  function regStep(dir) {
+    const steps = document.querySelectorAll('.reg-step');
+    steps[regCurrentStep - 1].classList.add('hidden');
+    regCurrentStep = Math.max(1, Math.min(5, regCurrentStep + dir));
+    steps[regCurrentStep - 1].classList.remove('hidden');
+    document.getElementById('reg-step-label').textContent = `Step ${regCurrentStep} of 5`;
+    document.getElementById('reg-title').textContent = regTitles[regCurrentStep - 1];
+    document.getElementById('reg-back-btn').style.display = regCurrentStep > 1 ? '' : 'none';
+    document.getElementById('reg-next-btn').textContent = regCurrentStep === 5 ? 'Create Account' : 'Continue';
+    document.querySelectorAll('#reg-progress > div').forEach((el, i) => {
+      el.classList.toggle('bg-indigo-600', i < regCurrentStep);
+      el.classList.toggle('bg-gray-200', i >= regCurrentStep);
+    });
+    if (regCurrentStep === 5 && dir === 1) {
+      setTimeout(() => { navTo('s-prospect'); }, 600);
     }
+  }
 
-    function closeSheet() {
-      if (!activeSheet) return;
-      const overlay = document.getElementById('sheet-overlay');
-      overlay.classList.remove('active');
-      activeSheet.classList.remove('active');
-      activeSheet = null;
-      if (document.getElementById('issues-list-view')) { toggleIssueView('list'); }
-    }
+  // ── Tab Switching ───────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('nav-' + name).classList.add('active');
+  }
 
-    function toggleIssueView(view) {
-      const listView = document.getElementById('issues-list-view');
-      const formView = document.getElementById('issues-form-view');
-      const title = document.getElementById('issues-title');
-      
-      if (view === 'form') {
-        listView.classList.replace('show-view', 'hide-view');
-        formView.classList.replace('hide-view', 'show-view');
-        title.innerHTML = 'Raise Issue';
-      } else {
-        formView.classList.replace('show-view', 'hide-view');
-        listView.classList.replace('hide-view', 'show-view');
-        title.innerHTML = 'Issues';
-      }
-    }
+  // ── Join PG Flow ────────────────────────────────
+  function showJoinPreview() {
+    document.getElementById('join-step-1').classList.add('hidden');
+    document.getElementById('join-step-2').classList.remove('hidden');
+  }
+  function showWaitlistConfirm() {
+    document.getElementById('join-step-2').classList.add('hidden');
+    document.getElementById('join-step-3').classList.remove('hidden');
+  }
 
-    function collectParcel() {
-      const btn = document.getElementById('parcel-collect-btn');
-      btn.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> Collected!';
-      btn.classList.replace('bg-indigo-600', 'bg-green-500');
-      lucide.createIcons();
-    }
-  </script>
+  // ── Issues ──────────────────────────────────────
+  function showIssueForm() {
+    document.getElementById('issue-list-view').classList.add('hidden');
+    document.getElementById('issue-list-view').classList.remove('flex');
+    document.getElementById('issue-form-view').classList.remove('hidden');
+    document.getElementById('issue-form-view').classList.add('flex');
+    document.getElementById('issue-page-title').textContent = 'New Issue';
+    document.getElementById('raise-issue-btn').classList.add('hidden');
+    lucide.createIcons();
+  }
+  function hideIssueForm() {
+    document.getElementById('issue-form-view').classList.add('hidden');
+    document.getElementById('issue-form-view').classList.remove('flex');
+    document.getElementById('issue-list-view').classList.remove('hidden');
+    document.getElementById('issue-list-view').classList.add('flex');
+    document.getElementById('issue-page-title').textContent = 'Issues';
+    document.getElementById('raise-issue-btn').classList.remove('hidden');
+  }
+  function resetIssueView() { hideIssueForm(); }
+  function switchIssueTab(tab, el) {
+    document.querySelectorAll('#issue-tab-open, #issue-tab-closed').forEach(t => t.classList.add('hidden'));
+    document.getElementById('issue-tab-' + tab).classList.remove('hidden');
+    el.closest('.tab-bar').querySelectorAll('.tab-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── Cleaning ────────────────────────────────────
+  function switchCleanTab(tab, el) {
+    el.closest('.tab-bar').querySelectorAll('.tab-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ── Parcels ─────────────────────────────────────
+  function switchParcelTab(tab, el) {
+    document.getElementById('parcel-tab-awaiting').classList.add('hidden');
+    document.getElementById('parcel-tab-collected').classList.add('hidden');
+    document.getElementById('parcel-tab-' + tab).classList.remove('hidden');
+    el.closest('.tab-bar').querySelectorAll('.tab-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function collectParcel() {
+    const btn = document.getElementById('collect-btn');
+    btn.textContent = 'Collected!';
+    btn.style.background = '#10B981';
+    btn.style.boxShadow = '0 4px 16px rgba(16,185,129,0.3)';
+  }
+
+  // ── Star Rating ─────────────────────────────────
+  function setStars(group, count) {
+    const container = document.getElementById('stars-' + group);
+    container.querySelectorAll('.star').forEach((s, i) => {
+      s.classList.toggle('active', i < count);
+    });
+  }
+  function submitRating() {
+    document.getElementById('rating-section').classList.add('hidden');
+    document.getElementById('rating-done').classList.remove('hidden');
+    lucide.createIcons();
+  }
+</script>
 </body>
 </html>

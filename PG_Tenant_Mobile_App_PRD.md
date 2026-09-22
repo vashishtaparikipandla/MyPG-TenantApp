@@ -1,8 +1,26 @@
 # PG Wonders — Tenant Mobile App — Product Requirements Document
 
-**Version:** 0.2 (Draft for prototype build)
+**Version:** 0.3 (Prototype iteration — UX/IA decisions)
 **Companion to:** `PG_Management_Platform_PRD.md` ("Owner PRD" — referenced below as **Owner §x**)
 **Status:** Living document. This is the "other side of the coin" of the Owner PRD: every tenant action here is cross-linked to what the Owner / Manager / Staff / Admin sees or does (see §8).
+
+**Change log — v0.3** (UX & IA decisions from prototype stakeholder review — override anything older)
+| Decision | Change |
+|---|---|
+| **DEC-14** | **Registration is a 5-step wizard**: (1) Basic info; (2) Lifestyle & food prefs; (3) Guardian details (collected at registration, not only at activation); (4) Emergency contact; (5) Consent & Privacy. All steps are resumable. |
+| **DEC-15** | **PG onboarding (code/QR) shows a full PG preview** before submitting — photo, name, gender policy, food policy, room types with prices, availability hint. Tenant picks room type and move-in date before submitting request. QR scan is a first-class entry point. |
+| **DEC-16** | **Navigation (S4/S5): 3 bottom tabs** (Home · Payments · Profile). All major flows use **full-screen push/pop page navigation** (not drawers/sheets). Mini-sheets reserved for small overlays only: WiFi, SOS, Inbox, Refer & Earn. |
+| **DEC-17** | **Room & Roommates always visible on Home** as a static open card — no tap required. WiFi quick-access icon lives contextually on this card. |
+| **DEC-18** | **Home Quick Actions grid: daily-use only** — Menu · Issues · Cleaning · Parcels. About PG and WiFi removed from grid. |
+| **DEC-19** | **Issues: Open / Closed tabs** with multi-category dummy data. New Issue form opens inline on the Issues page (not a separate screen). |
+| **DEC-20** | **Cleaning: full history with distinct states** — Done (green) · Skipped by tenant (amber) · Missed by staff, auto-rescheduled (red). |
+| **DEC-21** | **Parcels: Awaiting Pickup / Collected tabs** — Awaiting shows parcel photo, timestamp, guard name, Collect CTA; Collected shows pickup timestamps. |
+| **DEC-22** | **Food Menu: full week via Mon–Sun day-picker**. Leave days show auto-paused orange state with no toggle. |
+| **DEC-23** | **Leave screen: prominent disclaimer** — "Meals are automatically paused on leave days — no manual action needed." Shown above date pickers. |
+| **DEC-24** | **Edit Profile reflects all registration fields** including guardian details. Accessible via pencil icon on Profile card. |
+| **DEC-25** | **Profile tab: two labelled sections** — (1) Hostel-specific (Amenities, Docs, Leave, Move Out); (2) App & Account (Stay History, Refer, Help). Profile display uses styled initials, not a clickable avatar. |
+| **DEC-26** | **Stay History: past hostels open a full detail page** — room details, stay period, rent, exit type, deposit return, masked manager contact, and a 3-question private star rating (Overall, Food, Cleanliness). |
+| **DEC-27** | **Owner Announcements are the top card on Home** (above rent), always visible. Sent from the owner dashboard; appear inline on Home and in the Inbox bell. |
 
 **Change log — v0.2** (stakeholder decisions; these override anything older in this document)
 | Decision | Change |
